@@ -4,17 +4,32 @@ A lightweight macOS menu bar utility in early development. The intended Finder a
 
 ## Current state
 
-The SwiftUI menu bar shell builds and runs on macOS 13 or later. It does **not** yet install Finder commands or perform file operations. `FinderSyncPrototype/` contains an unbundled research stub; it is not an enabled Finder extension. The first milestone is to validate an appropriate integration before committing to the implementation.
+The SwiftUI menu bar shell targets macOS 13 or later. It does **not** yet install Finder commands or perform file operations. `FinderSyncPrototype/` contains an unbundled research stub; it is not an enabled Finder extension. The first integration milestone is to validate an appropriate integration before committing to the implementation.
 
-## Run the shell
+## Build and run
 
-Install Xcode and its command-line tools, then run:
+Open `MacUtility.xcodeproj` in Xcode, select the MacUtility scheme and My Mac, and run. The app has no Dock icon; use its menu bar icon to quit. To sign with your Apple account, choose your development team under **Signing & Capabilities** and replace the placeholder `com.example.MacUtility` bundle identifier with a unique identifier you control. The project enables App Sandbox, hardened runtime, and automatic signing; no team or credentials are stored in the project.
+
+For a locally ad-hoc-signed build without an Apple signing identity:
+
+```sh
+xcodebuild -project MacUtility.xcodeproj -scheme MacUtility -configuration Debug \
+  -derivedDataPath /tmp/macutility-build CODE_SIGN_IDENTITY=- CODE_SIGNING_REQUIRED=NO build
+```
+
+The resulting app is `/tmp/macutility-build/Build/Products/Debug/MacUtility.app`. Ad-hoc signing is for local testing, not a notarized distribution build. For distribution, select the appropriate team, unique identifier, signing certificate and provisioning in Xcode; archive and notarize or submit through the intended channel. Distribution signing has not yet been verified.
+
+## Automated verification
+
+Run `bash Tests/verify-app-bundle.sh` on a Mac with Xcode installed. It builds a fresh ad-hoc signed app and verifies the executable, bundle type, minimum version, accessory configuration, signature, sandbox, and hardened runtime. The check does not verify that the menu appears or that Quit works, nor does it test a Developer ID signature or execution on macOS 13. Those require interactive testing and appropriate signing credentials.
+
+The menu bar shell can also be built as a Swift package with Xcode command-line tools:
 
 ```sh
 swift run MacUtility
 ```
 
-The app runs as an accessory without a Dock icon. Use its menu bar icon to quit. A distributable `.app`, code signing, login launch, settings, and extension packaging are not implemented.
+Login launch, settings, extension packaging, and a distributable signed release are not implemented.
 
 ## Finder integration constraint
 

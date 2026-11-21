@@ -2,6 +2,8 @@
 
 Status: **Finder Sync is the provisional implementation candidate; distribution and location coverage remain unverified**. This is a research build, not a production implementation.
 
+Initial product scope is the latest macOS release and local filesystem files and folders. Older macOS releases and cloud-backed or network locations are outside the initial support scope. The observed prototype results below are from macOS 27.2.1 only; the existing deployment target does not imply compatibility testing on older releases. Folder permissions, cross-process access, and distribution remain unverified within this narrower scope.
+
 ## Decision and evidence
 
 Continue with a narrowly scoped Finder Sync experiment as the leading candidate for the requested background and item context menus. Also evaluate Services as an alternative for selected files and folders. Do not commit the product architecture or promise App Store acceptance until the manual matrix below and a distribution review are completed. Services may require a different user experience, particularly for empty Finder backgrounds.
@@ -24,7 +26,7 @@ On macOS 27.2.1 (26B131), Apple silicon, Xcode 27.2 (27B52):
 
 ## Context and setup matrix to complete
 
-Record OS version, Finder version, build signing, sandbox configuration, enabled extensions, folder type, observed menu location, supplied URLs, and any errors for each case. Blank cells are **not yet tested**.
+Record OS version, Finder version, build signing, sandbox configuration, enabled extensions, folder type, observed menu location, supplied URLs, and any errors for each case. Entries marked not tested remain unverified; cloud and network coverage is outside the initial scope.
 
 | Interaction | Finder Sync | Services |
 |---|---|---|
@@ -33,8 +35,8 @@ Record OS version, Finder version, build signing, sandbox configuration, enabled
 | Right-click empty background of the intended test folder | Action visible; target and selection were displayed folder | Action not visible in this run |
 | Multiple selected items | Action visible; target was containing folder, selection included both items | Action visible; invocation not tested |
 | Folder outside monitored root | Not tested | Not tested |
-| Cloud-backed item and background, normal and Shift-right-click | Not tested | Not tested |
-| Read-only, removable, network and revoked-access locations | Not tested | Not tested |
+| Cloud-backed and network locations | Outside initial scope; not tested | Outside initial scope; not tested |
+| Read-only and revoked-access local locations | Not tested | Not tested |
 | Finder setup/enablement and menu placement | Registered and enabled outside the command sandbox; item visible in tested contexts after root fix | Host launched; selected-file action appeared directly and selected-folder action under Services |
 
 ## Prototype and manual test procedure
@@ -44,7 +46,7 @@ Record OS version, Finder version, build signing, sandbox configuration, enabled
 1. Run `bash Tests/verify-finder-prototype.sh` for the noninteractive build and packaging checks. To retain a diagnostic app, run `bash Research/FinderIntegration/build.sh /tmp/macutility-research-output` with a **new**, nonexistent output path.
 2. On a development Mac where plugin registration is allowed, arrange a real development signature and unique bundle identifiers if required; ad-hoc signing may not suffice. Create `~/MacUtilityPrototype` only if it does not already exist, with disposable sample files and a subfolder. Keep track of what you created.
 3. Register/enable the extension using the appropriate system extension settings and launch the host so Services can register. System Settings wording varies by macOS release. Record the exact steps. If setup fails, record the error rather than treating it as a negative menu result.
-4. Right-click the sample file, folder, and background; compare the disabled diagnostic menu entries with the intended target and selection. Repeat with multiple selection, an unrelated location, and supported cloud/network/removable locations. For Services inspect the selected file/folder in Finder's Services context. Record actual placement and missing cases.
+4. Right-click the sample file, folder, and background; compare the disabled diagnostic menu entries with the intended target and selection. Repeat with multiple selection and an unrelated local location. For Services inspect the selected file/folder in Finder's Services context. Record actual placement and missing cases.
 5. Disable/unregister the research extension and quit the host. Remove only sample files and folders created for the test, and delete the generated research app. Confirm that the production app and other extensions remain unchanged.
 
 The script does not install or register anything. A real test must assess whether an app can obtain and retain the minimum folder access it needs. Apple documents [user-selected folders, sandbox access and bookmarks](https://developer.apple.com/documentation/security/accessing-files-from-the-macos-app-sandbox); do not assume an app-scoped bookmark can simply be shared across processes. Prove cross-process access with the actual signing and entitlements used in the selected design.

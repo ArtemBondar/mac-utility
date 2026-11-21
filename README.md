@@ -19,6 +19,10 @@ xcodebuild -project MacUtility.xcodeproj -scheme MacUtility -configuration Debug
 
 The resulting app is `/tmp/macutility-build/Build/Products/Debug/MacUtility.app`. Ad-hoc signing is for local testing, not a notarized distribution build. For distribution, select the appropriate team, unique identifier, signing certificate and provisioning in Xcode; archive and notarize or submit through the intended channel. Distribution signing has not yet been verified.
 
+## Automated verification
+
+Run `bash Tests/verify-app-bundle.sh` on a Mac with Xcode installed. It builds a fresh ad-hoc signed app and verifies the executable, bundle type, minimum version, accessory configuration, signature, sandbox, and hardened runtime. The check does not verify that the menu appears or that Quit works, nor does it test a Developer ID signature or execution on macOS 13. Those require interactive testing and appropriate signing credentials.
+
 The menu bar shell can also be built as a Swift package with Xcode command-line tools:
 
 ```sh

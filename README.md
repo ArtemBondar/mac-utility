@@ -36,3 +36,5 @@ Login launch, settings, extension packaging, and a distributable signed release 
 Apple documents Finder Sync for file synchronization apps and says it is not intended as a general tool for modifying Finder. Its contextual menu applies to monitored directories. Investigate Finder Sync and Services with a signed, sandboxed prototype, including background clicks, selected folders, permissions and distribution viability before choosing a solution. The placeholder prototype must not be represented as a supported integration.
 
 See [the development plan](docs/DEVELOPMENT_PLAN.md) and [Apple's Finder Sync guide](https://developer.apple.com/library/archive/documentation/General/Conceptual/ExtensibilityPG/Finder.html).
+
+The [Finder integration research](docs/FINDER_INTEGRATION_RESEARCH.md) describes the diagnostic prototypes, automated packaging checks, and remaining manual feasibility work.

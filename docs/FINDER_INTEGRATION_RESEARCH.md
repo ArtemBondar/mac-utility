@@ -15,7 +15,8 @@ The developer of [QuickRight reports](https://www.reddit.com/r/MacOS/s/APqwtu65d
 On macOS 27.2.1 (26B131), Apple silicon, Xcode 27.2 (27B52):
 
 - `bash Tests/verify-finder-prototype.sh` compiled a diagnostic Services host and Finder Sync extension, ad-hoc signed both, verified signatures and sandbox entitlements, and checked registration metadata. This checks packaging, not actual host integration or UI behavior.
-- `pluginkit -a` for the built extension failed with `add: Connection invalid` in this managed environment. Consequently no menu placement, selected-item, background, or extension enablement result was observed. No persistent registration was reported as successful.
+- In the command sandbox, `pluginkit -a` failed with `add: Connection invalid`. Outside that sandbox, registration and host launch succeeded; `pluginkit` listed the extension as enabled and its process was observed. In a disposable `~/MacUtilityPrototype` folder, Finder showed the Services action directly in the selected file's contextual menu, and invoking it displayed the correct file URL. The Finder Sync action did not appear for that file or the folder background in this run. Its registered root uses `homeDirectoryForCurrentUser` inside a sandboxed process, which may resolve to a container rather than the intended folder; the cause was not verified. This is not proof that Finder Sync cannot support those contexts.
+- After the test, the extension was disabled and unregistered, the host's Launch Services registration was removed, the test processes were stopped, and the disposable file and folder were deleted. A subsequent `pluginkit` query returned no matches.
 - `security find-identity -v -p codesigning` reported zero valid identities. No Developer ID signature, notarization, App Store submission, review, or installation on a clean account has been tested. Ad-hoc signing is not a distribution signature.
 - No macOS 13 execution, user-selected folder permissions, cross-process bookmark access, Terminal automation, network volumes, removable disks, or cloud-provider behavior was tested. No performance or reliability claim can be made from this build.
 
@@ -25,14 +26,14 @@ Record OS version, Finder version, build signing, sandbox configuration, enabled
 
 | Interaction | Finder Sync | Services |
 |---|---|---|
-| Right-click one ordinary file | Not tested | Not tested |
+| Right-click one ordinary file | Action not visible in this prototype run; root scope unverified | Action visible directly in the context menu; returned the sample file URL |
 | Right-click one ordinary folder | Not tested | Not tested |
-| Right-click empty background of a monitored folder | Not tested | Not tested |
+| Right-click empty background of the intended test folder | Action not visible in this prototype run; root scope unverified | Action not visible in this run |
 | Multiple selected items | Not tested | Not tested |
 | Folder outside monitored root | Not tested | Not tested |
 | Cloud-backed item and background, normal and Shift-right-click | Not tested | Not tested |
 | Read-only, removable, network and revoked-access locations | Not tested | Not tested |
-| Finder setup/enablement and menu placement | Not tested | Not tested |
+| Finder setup/enablement and menu placement | Registered and enabled outside the command sandbox; process started; action absent in tested contexts | Host launched and selected-file action appeared directly in the Finder context menu |
 
 ## Prototype and manual test procedure
 

@@ -6,9 +6,9 @@ import FinderSync
 final class FinderSync: FIFinderSync {
     override init() {
         super.init()
-        FIFinderSyncController.default().directoryURLs = [
-            FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("MacUtilityPrototype", isDirectory: true)
-        ]
+        if let root = ResearchRoot.currentUserURL() {
+            FIFinderSyncController.default().directoryURLs = [root]
+        }
     }
 
     override func menu(for menuKind: FIMenuKind) -> NSMenu? {
@@ -17,6 +17,12 @@ final class FinderSync: FIFinderSync {
         let item = NSMenuItem(title: "Inspect Finder Context", action: #selector(inspect(_:)), keyEquivalent: "")
         item.target = self
         menu.addItem(item)
+        let controller = FIFinderSyncController.default()
+        for line in ContextSummary.lines(target: controller.targetedURL(), selection: controller.selectedItemURLs() ?? []) {
+            let detail = NSMenuItem(title: line, action: nil, keyEquivalent: "")
+            detail.isEnabled = false
+            menu.addItem(detail)
+        }
         return menu
     }
 

@@ -21,13 +21,19 @@ enum FileCreation {
 
     /// Creates exactly one item. Exclusive creation prevents overwriting even under races.
     static func create(_ kind: Kind, name: String, in directory: URL) throws -> URL {
-        guard !name.isEmpty, name != ".", name != "..", !name.contains("/"), !name.contains("\0") else {
-            throw Failure.invalidName
-        }
         guard directory.isFileURL else { throw Failure.invalidDestination }
         let fd = open(directory.path, O_RDONLY | O_DIRECTORY | O_CLOEXEC)
         guard fd >= 0 else { throw Failure.system(errno) }
         defer { close(fd) }
+        return try create(kind, name: name, in: directory, directoryFD: fd)
+    }
+
+    /// The caller owns the directory descriptor and keeps it open during this call.
+    static func create(_ kind: Kind, name: String, in directory: URL, directoryFD fd: Int32) throws -> URL {
+        guard !name.isEmpty, name != ".", name != "..", !name.contains("/"), !name.contains("\0") else {
+            throw Failure.invalidName
+        }
+        guard directory.isFileURL else { throw Failure.invalidDestination }
         switch kind {
         case .file:
             let result = openat(fd, name, O_WRONLY | O_CREAT | O_EXCL | O_CLOEXEC, mode_t(0o666))

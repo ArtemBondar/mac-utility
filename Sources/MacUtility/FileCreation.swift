@@ -11,10 +11,10 @@ enum FileCreation {
 
         var errorDescription: String? {
             switch self {
-            case .invalidName: return "Enter a name without a slash or null character."
-            case .invalidDestination: return "The destination folder is unavailable."
-            case .system(let code) where code == EEXIST: return "An item with that name already exists."
-            case .system(let code): return String(cString: strerror(code))
+            case .invalidName: return L10n.text("Enter a name without a slash or null character.")
+            case .invalidDestination: return L10n.text("The destination folder is unavailable.")
+            case .system(let code) where code == EEXIST: return L10n.text("An item with that name already exists.")
+            case .system(let code): return NSError(domain: NSPOSIXErrorDomain, code: Int(code)).localizedDescription
             }
         }
     }

@@ -16,6 +16,9 @@ info="$app/Contents/Info.plist"
 plistbuddy=/usr/libexec/PlistBuddy
 
 test -x "$app/Contents/MacOS/MacUtility"
+for language in en uk; do
+  test -f "$app/Contents/Resources/$language.lproj/Localizable.strings"
+done
 test "$("$plistbuddy" -c 'Print :CFBundlePackageType' "$info")" = APPL
 test "$("$plistbuddy" -c 'Print :LSUIElement' "$info")" = true
 test "$("$plistbuddy" -c 'Print :LSMinimumSystemVersion' "$info")" = 13.0

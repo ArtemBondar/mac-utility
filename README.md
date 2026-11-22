@@ -46,3 +46,9 @@ Apple documents Finder Sync for file synchronization apps and says it is not int
 See [the development plan](docs/DEVELOPMENT_PLAN.md) and [Apple's Finder Sync guide](https://developer.apple.com/library/archive/documentation/General/Conceptual/ExtensibilityPG/Finder.html).
 
 The [Finder integration research](docs/FINDER_INTEGRATION_RESEARCH.md) describes the diagnostic prototypes, automated packaging checks, and remaining manual feasibility work.
+
+## Localization
+
+The app follows the system language and includes English and Ukrainian; English is the development-language fallback. User-visible text is looked up through `L10n` and `Localizable.strings` resources. To add a language, create a new language `.lproj` directory in `Sources/MacUtility/Resources`, translate every key, and add it to the Xcode `Localizable.strings` variant group and known regions. Keep format placeholders compatible. Run `bash Tests/verify-localization.sh` and `bash Tests/verify-app-bundle.sh` after changing translations. Plural-sensitive text should use native `.stringsdict` resources when introduced.
+
+Actual English and Ukrainian UI rendering, text truncation, VoiceOver, and language fallback should also be verified interactively; they have not yet been tested. The research-only Finder prototype is not localized.

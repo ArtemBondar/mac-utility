@@ -31,6 +31,8 @@ Run `bash Tests/verify-finder-target.sh` for local file, folder, background and 
 
 Run `bash Tests/verify-file-creation.sh` to verify empty file and folder creation, validation, existing-item protection and concurrent name collisions. The creation service and native prompt are not yet connected to Finder; interactive prompting, sandbox folder authorization and end-to-end Finder actions remain unverified. The caller must hold security-scoped access to the target folder during creation.
 
+Run `bash Tests/verify-terminal-launcher.sh` for URL handoff, special characters, invalid targets, missing Terminal, and launch failures. The launcher uses Launch Services to pass the directory URL to Terminal without interpolating shell commands or requesting Automation permission. A standalone unsandboxed probe returned successful handoff on this Mac; Terminal's working directory could not be inspected in this environment. A successful handoff does not establish the working directory. Sandboxed behavior, permission failures, and Finder integration remain unverified; the caller must hold folder access and report the localized error on failure.
+
 The menu bar shell can also be built as a Swift package with Xcode command-line tools:
 
 ```sh

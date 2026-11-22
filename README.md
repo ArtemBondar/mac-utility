@@ -43,6 +43,8 @@ Extension packaging and a distributable signed release are not implemented.
 
 See [release preparation](docs/RELEASE.md) for a read-only preflight and the outstanding signing, notarization, and clean-account checks.
 
+See [verification results](docs/VERIFICATION.md) for accessibility and robustness checks, an initial idle resource sample, and remaining manual work.
+
 ## Finder integration constraint
 
 Apple documents Finder Sync for file synchronization apps and says it is not intended as a general tool for modifying Finder. Its contextual menu applies to monitored directories. Investigate Finder Sync and Services with a signed, sandboxed prototype, including background clicks, selected folders, permissions and distribution viability before choosing a solution. The placeholder prototype must not be represented as a supported integration.

@@ -17,15 +17,18 @@ struct StoredSettings: Codable, Equatable {
 final class SettingsStore: ObservableObject {
     @Published private(set) var settings: StoredSettings
     private let defaults: UserDefaults
+    private let sharedDefaults: UserDefaults?
     private let key = "settings.v1"
 
-    init(defaults: UserDefaults = .standard) {
+    init(defaults: UserDefaults = .standard, sharedDefaults: UserDefaults? = nil) {
         self.defaults = defaults
+        self.sharedDefaults = sharedDefaults
         if let data = defaults.data(forKey: key), let saved = try? JSONDecoder().decode(StoredSettings.self, from: data) {
             settings = saved
         } else {
             settings = StoredSettings()
         }
+        publishFinderConfiguration()
     }
 
     func setActions(newFile: Bool, newFolder: Bool, openTerminal: Bool) {
@@ -75,5 +78,15 @@ final class SettingsStore: ObservableObject {
 
     private func save() {
         if let data = try? JSONEncoder().encode(settings) { defaults.set(data, forKey: key) }
+        publishFinderConfiguration()
+    }
+
+    private func publishFinderConfiguration() {
+        guard let shared = sharedDefaults else { return }
+        let config = FinderConfiguration(roots: settings.folders.map(\.path), newFile: settings.newFile,
+                                         newFolder: settings.newFolder, openTerminal: settings.openTerminal)
+        guard (try? config.write(to: shared)) != nil else { return }
+        DistributedNotificationCenter.default().postNotificationName(Notification.Name(FinderConfiguration.notification),
+                                                                       object: nil, userInfo: nil, deliverImmediately: true)
     }
 }

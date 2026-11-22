@@ -8,6 +8,8 @@
 "The Finder extension is not installed yet. These preferences will take effect when integration is available." = "Розширення Finder ще не встановлено. Ці параметри набудуть чинності, коли інтеграція стане доступною.";
 "Choose local folders the app may access. You can remove access at any time." = "Виберіть локальні папки, до яких програма матиме доступ. Ви можете скасувати доступ будь-коли.";
 "Check Access" = "Перевірити доступ";
+"Check access for %@" = "Перевірити доступ до %@";
+"Remove access for %@" = "Видалити доступ до %@";
 "Folder access is available." = "Доступ до папки доступний.";
 "Folder access could not be restored. Remove and add the folder again." = "Не вдалося відновити доступ до папки. Видаліть і додайте її знову.";
 "Remove" = "Видалити";

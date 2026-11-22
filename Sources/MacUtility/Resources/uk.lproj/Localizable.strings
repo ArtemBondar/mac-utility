@@ -32,3 +32,5 @@
 "Enter a name without a slash or null character." = "Введіть назву без скісної риски або нульового символу.";
 "The destination folder is unavailable." = "Папка призначення недоступна.";
 "An item with that name already exists." = "Об’єкт із такою назвою вже існує.";
+"Terminal could not be found." = "Не вдалося знайти Термінал.";
+"Terminal could not be opened." = "Не вдалося відкрити Термінал.";

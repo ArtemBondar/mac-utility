@@ -5,12 +5,12 @@ import ServiceManagement
 @main
 struct MacUtilityApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
-    @StateObject private var store = SettingsStore()
+    @StateObject private var store = AppDelegate.sharedStore
     @Environment(\.openWindow) private var openWindow
 
     var body: some Scene {
         MenuBarExtra(L10n.text("Mac Utility"), systemImage: "folder.badge.gearshape") {
-            Text(L10n.text("Finder integration: not installed"))
+            Text(L10n.text("Finder integration requires setup"))
                 .disabled(true)
             Divider()
             Button(L10n.text("Settings…")) {
@@ -29,8 +29,16 @@ struct MacUtilityApp: App {
 }
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
+    static let sharedStore = SettingsStore(sharedDefaults: UserDefaults(suiteName: FinderConfiguration.groupIdentifier))
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
+    }
+
+    func application(_ application: NSApplication, open urls: [URL]) {
+        for url in urls where url.scheme == "macutility-finder" {
+            FinderRequestHandler.handle(url, store: Self.sharedStore)
+        }
     }
 }
 
@@ -42,7 +50,7 @@ struct SettingsView: View {
     var body: some View {
         Form {
             Section(L10n.text("Finder Integration")) {
-                Text(L10n.text("The Finder extension is not installed yet. These preferences will take effect when integration is available."))
+                Text(L10n.text("Enable the Mac Utility Finder extension in System Settings and add folders below."))
                     .foregroundStyle(.secondary)
                 Text(L10n.text("Choose local folders the app may access. You can remove access at any time."))
                 ForEach(store.settings.folders) { folder in

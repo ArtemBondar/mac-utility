@@ -19,6 +19,8 @@ codesign --force --sign - --options runtime --entitlements "$project_root/Finder
 codesign --force --sign - --options runtime --entitlements "$project_root/MacUtility.entitlements" "$app"
 info="$app/Contents/Info.plist"
 plistbuddy=/usr/libexec/PlistBuddy
+test -s "$app/Contents/Resources/AppIcon.icns"
+test "$("$plistbuddy" -c 'Print :CFBundleIconFile' "$info")" = AppIcon
 
 test -x "$app/Contents/MacOS/MacUtility"
 test -x "$extension/Contents/MacOS/FinderExtension"

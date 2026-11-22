@@ -16,6 +16,7 @@ struct StoredSettings: Codable, Equatable {
 
 final class SettingsStore: ObservableObject {
     @Published private(set) var settings: StoredSettings
+    @Published private(set) var showDockIcon: Bool
     private let defaults: UserDefaults
     private let sharedDefaults: UserDefaults?
     private let key = "settings.v1"
@@ -23,12 +24,18 @@ final class SettingsStore: ObservableObject {
     init(defaults: UserDefaults = .standard, sharedDefaults: UserDefaults? = nil) {
         self.defaults = defaults
         self.sharedDefaults = sharedDefaults
+        self.showDockIcon = defaults.bool(forKey: "showDockIcon")
         if let data = defaults.data(forKey: key), let saved = try? JSONDecoder().decode(StoredSettings.self, from: data) {
             settings = saved
         } else {
             settings = StoredSettings()
         }
         publishFinderConfiguration()
+    }
+
+    func setShowDockIcon(_ visible: Bool) {
+        showDockIcon = visible
+        defaults.set(visible, forKey: "showDockIcon")
     }
 
     func setActions(newFile: Bool, newFolder: Bool, openTerminal: Bool) {

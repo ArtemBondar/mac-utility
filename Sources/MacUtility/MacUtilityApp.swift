@@ -32,7 +32,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     static let sharedStore = SettingsStore(sharedDefaults: UserDefaults(suiteName: FinderConfiguration.groupIdentifier))
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        NSApp.setActivationPolicy(.accessory)
+        NSApp.setActivationPolicy(Self.sharedStore.showDockIcon ? .regular : .accessory)
     }
 
     func application(_ application: NSApplication, open urls: [URL]) {
@@ -73,6 +73,10 @@ struct SettingsView: View {
                 Toggle(L10n.text("Open Terminal Here"), isOn: actionBinding(\.openTerminal))
             }
             Section(L10n.text("General")) {
+                Toggle(L10n.text("Show Dock icon"), isOn: Binding(get: { store.showDockIcon }, set: { visible in
+                    store.setShowDockIcon(visible)
+                    NSApp.setActivationPolicy(visible ? .regular : .accessory)
+                }))
                 Toggle(L10n.text("Open at Login"), isOn: Binding(get: { loginEnabled }, set: { setLogin($0) }))
                 Text(L10n.text("macOS may require approval in Login Items settings.")).foregroundStyle(.secondary)
             }

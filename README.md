@@ -8,7 +8,7 @@ An initial Finder Sync extension and host action handoff are included. This inte
 
 ## Build and run
 
-Open `MacUtility.xcodeproj` in Xcode, select the MacUtility scheme and My Mac, and run. The app has no Dock icon; use its menu bar icon to quit. To sign with your Apple account, choose your development team under **Signing & Capabilities** and replace the placeholder `com.example.MacUtility` bundle identifier with a unique identifier you control. The project enables App Sandbox, hardened runtime, and automatic signing; no team or credentials are stored in the project.
+Open `MacUtility.xcodeproj` in Xcode, select the MacUtility scheme and My Mac, and run. The Dock icon is hidden by default; use **Show Dock icon** in Settings to show it. The menu bar icon remains available to open Settings or quit. To sign with your Apple account, choose your development team under **Signing & Capabilities** and replace the placeholder `com.example.MacUtility` bundle identifier with a unique identifier you control. The project enables App Sandbox, hardened runtime, and automatic signing; no team or credentials are stored in the project.
 
 The Finder extension and containing app share the placeholder App Group `group.com.example.MacUtility`. Configure a unique App Group for your team, replacing the identifier in `FinderConfiguration.swift`, `MacUtility.entitlements`, and `FinderExtension.entitlements`; configure unique bundle identifiers and signing for both targets. App Group provisioning is required for a normal signed build. No working team configuration or distribution signature has yet been verified. `bash Tests/verify-app-bundle.sh` performs unsigned compilation and manual ad-hoc signing for bundle checks only; it does not prove App Group access.
 

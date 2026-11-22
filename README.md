@@ -4,32 +4,27 @@ A lightweight macOS menu bar utility in early development. The intended Finder a
 
 ## Current state
 
-The SwiftUI menu bar shell targets macOS 13 or later. It does **not** yet install Finder commands or perform file operations. `FinderSyncPrototype/` contains an unbundled research stub; it is not an enabled Finder extension. The first integration milestone is to validate an appropriate integration before committing to the implementation.
+An initial Finder Sync extension and host action handoff are included. This integration is experimental and has not been tested end-to-end with a provisioned App Group, real folder grants, or a signed distribution build. Initial product scope is local files on current macOS. `FinderSyncPrototype/` remains an unrelated research stub.
 
 ## Build and run
 
 Open `MacUtility.xcodeproj` in Xcode, select the MacUtility scheme and My Mac, and run. The app has no Dock icon; use its menu bar icon to quit. To sign with your Apple account, choose your development team under **Signing & Capabilities** and replace the placeholder `com.example.MacUtility` bundle identifier with a unique identifier you control. The project enables App Sandbox, hardened runtime, and automatic signing; no team or credentials are stored in the project.
 
-For a locally ad-hoc-signed build without an Apple signing identity:
+The Finder extension and containing app share the placeholder App Group `group.com.example.MacUtility`. Configure a unique App Group for your team, replacing the identifier in `FinderConfiguration.swift`, `MacUtility.entitlements`, and `FinderExtension.entitlements`; configure unique bundle identifiers and signing for both targets. App Group provisioning is required for a normal signed build. No working team configuration or distribution signature has yet been verified. `bash Tests/verify-app-bundle.sh` performs unsigned compilation and manual ad-hoc signing for bundle checks only; it does not prove App Group access.
 
-```sh
-xcodebuild -project MacUtility.xcodeproj -scheme MacUtility -configuration Debug \
-  -derivedDataPath /tmp/macutility-build CODE_SIGN_IDENTITY=- CODE_SIGNING_REQUIRED=NO build
-```
-
-The resulting app is `/tmp/macutility-build/Build/Products/Debug/MacUtility.app`. Ad-hoc signing is for local testing, not a notarized distribution build. For distribution, select the appropriate team, unique identifier, signing certificate and provisioning in Xcode; archive and notarize or submit through the intended channel. Distribution signing has not yet been verified.
-
-The menu bar Settings window lets you select folders, check or remove saved access, choose future actions, and request launch at login. macOS may require login-item approval. Folder access uses app-scoped bookmarks and applies only to the containing app; no production Finder extension consumes these settings yet. Finder integration enablement, bookmark sharing across processes, folder selection and restored access in a signed app, and login-item behavior remain unverified. Initial product scope is local files on current macOS.
+The menu bar Settings window lets you select folders, check or remove saved access, choose future actions, and request launch at login. macOS may require login-item approval. Folder access uses app-scoped bookmarks in the containing app. Only paths and action preferences are shared with the extension; bookmarks stay in the containing app. Finder integration enablement, cross-process configuration, folder selection and restored access in a signed app, and login-item behavior remain unverified. Initial product scope is local files on current macOS.
 
 ## Automated verification
 
 Run `bash Tests/verify-app-bundle.sh` on a Mac with Xcode installed. It builds a fresh ad-hoc signed app and verifies the executable, bundle type, minimum version, accessory configuration, signature, sandbox, and hardened runtime. The check does not verify that the menu appears or that Quit works, nor does it test a Developer ID signature or execution on macOS 13. Those require interactive testing and appropriate signing credentials.
 
+Run `bash Tests/verify-finder-configuration.sh`, `bash Tests/verify-finder-requests.sh` to check shared configuration, untrusted request parsing, containment and descriptor-anchored creation. The URL scheme is not sender-authenticated: the host validates user-granted scope and preferences, and requires confirmation before each operation. Do not treat these tests as proof of live App Group or Finder behavior.
+
 Run `bash Tests/verify-settings.sh` for isolated settings persistence, folder removal and invalid-bookmark handling. This does not replace interactive permission, login-item, and Finder extension testing.
 
-Run `bash Tests/verify-finder-target.sh` for local file, folder, background and ambiguous-selection resolution. The standalone resolver is not yet wired to a production Finder extension. It rejects multiple selected items, missing paths and nonlocal volumes; resolves symbolic links; and requires its caller to verify folder authorization and revalidate access when performing an operation. Actual Finder integration, security-scoped access and behavior on cloud-backed volumes remain unverified.
+Run `bash Tests/verify-finder-target.sh` for local file, folder, background and ambiguous-selection resolution. The host resolves requests from the extension using this resolver. It rejects multiple selected items, missing paths and nonlocal volumes; resolves symbolic links; and requires its caller to verify folder authorization and revalidate access when performing an operation. Actual Finder integration, security-scoped access and behavior on cloud-backed volumes remain unverified.
 
-Run `bash Tests/verify-file-creation.sh` to verify empty file and folder creation, validation, existing-item protection and concurrent name collisions. The creation service and native prompt are not yet connected to Finder; interactive prompting, sandbox folder authorization and end-to-end Finder actions remain unverified. The caller must hold security-scoped access to the target folder during creation.
+Run `bash Tests/verify-file-creation.sh` to verify empty file and folder creation, validation, existing-item protection and concurrent name collisions. The creation service and native prompt are wired to the host request handler; interactive prompting, sandbox folder authorization and end-to-end Finder actions remain unverified. The caller must hold security-scoped access to the target folder during creation.
 
 Run `bash Tests/verify-terminal-launcher.sh` for URL handoff, special characters, invalid targets, missing Terminal, and launch failures. The launcher uses Launch Services to pass the directory URL to Terminal without interpolating shell commands or requesting Automation permission. A standalone unsandboxed probe returned successful handoff on this Mac; Terminal's working directory could not be inspected in this environment. A successful handoff does not establish the working directory. Sandboxed behavior, permission failures, and Finder integration remain unverified; the caller must hold folder access and report the localized error on failure.
 
@@ -39,7 +34,7 @@ The menu bar shell can also be built as a Swift package with Xcode command-line 
 swift run MacUtility
 ```
 
-Extension packaging and a distributable signed release are not implemented.
+A distributable signed release is not implemented.
 
 See [release preparation](docs/RELEASE.md) for a read-only preflight and the outstanding signing, notarization, and clean-account checks.
 

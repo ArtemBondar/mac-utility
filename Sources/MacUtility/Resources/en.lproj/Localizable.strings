@@ -1,11 +1,11 @@
 "Mac Utility" = "Mac Utility";
-"Finder integration: not installed" = "Finder integration: not installed";
+"Finder integration requires setup" = "Finder integration requires setup";
 "Settings…" = "Settings…";
 "About Mac Utility" = "About Mac Utility";
 "Quit Mac Utility" = "Quit Mac Utility";
 "Mac Utility Settings" = "Mac Utility Settings";
 "Finder Integration" = "Finder Integration";
-"The Finder extension is not installed yet. These preferences will take effect when integration is available." = "The Finder extension is not installed yet. These preferences will take effect when integration is available.";
+"Enable the Mac Utility Finder extension in System Settings and add folders below." = "Enable the Mac Utility Finder extension in System Settings and add folders below.";
 "Choose local folders the app may access. You can remove access at any time." = "Choose local folders the app may access. You can remove access at any time.";
 "Check Access" = "Check Access";
 "Check access for %@" = "Check access for %@";
@@ -26,7 +26,7 @@
 "Open Login Items in System Settings to review approval." = "Open Login Items in System Settings to review approval.";
 "Could not save folder access: %@" = "Could not save folder access: %@";
 "Could not change Open at Login: %@" = "Could not change Open at Login: %@";
-"Enter a name for the new item." = "Enter a name for the new item.";
+"Enter a name for the new item in %@." = "Enter a name for the new item in %@.";
 "File name" = "File name";
 "Folder name" = "Folder name";
 "Create" = "Create";
@@ -36,3 +36,6 @@
 "An item with that name already exists." = "An item with that name already exists.";
 "Terminal could not be found." = "Terminal could not be found.";
 "Terminal could not be opened." = "Terminal could not be opened.";
+"Finder action is unavailable. Check the selected folder and its access in Settings." = "Finder action is unavailable. Check the selected folder and its access in Settings.";
+"Open Terminal in %@?" = "Open Terminal in %@?";
+"Open Terminal" = "Open Terminal";

@@ -1,0 +1,21 @@
+import Foundation
+
+@main
+struct FinderConfigurationTests {
+    static func main() throws {
+        let name = "MacUtility.ConfigurationTests.\(UUID().uuidString)"
+        guard let defaults = UserDefaults(suiteName: name) else { fatalError("Unable to create test defaults") }
+        defer { defaults.removePersistentDomain(forName: name) }
+        precondition(FinderConfiguration.read(from: defaults) == nil)
+        let config = FinderConfiguration(roots: ["/tmp/folder with space", "/tmp/other"], newFile: true,
+                                         newFolder: false, openTerminal: true)
+        try config.write(to: defaults)
+        precondition(FinderConfiguration.read(from: defaults) == config)
+        let replacement = FinderConfiguration(roots: [], newFile: false, newFolder: true, openTerminal: false)
+        try replacement.write(to: defaults)
+        precondition(FinderConfiguration.read(from: defaults) == replacement)
+        defaults.set(Data("invalid".utf8), forKey: FinderConfiguration.key)
+        precondition(FinderConfiguration.read(from: defaults) == nil)
+        print("PASS: Finder shared configuration round trip and invalid data")
+    }
+}

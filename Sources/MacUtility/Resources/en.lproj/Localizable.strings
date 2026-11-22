@@ -32,3 +32,5 @@
 "Enter a name without a slash or null character." = "Enter a name without a slash or null character.";
 "The destination folder is unavailable." = "The destination folder is unavailable.";
 "An item with that name already exists." = "An item with that name already exists.";
+"Terminal could not be found." = "Terminal could not be found.";
+"Terminal could not be opened." = "Terminal could not be opened.";

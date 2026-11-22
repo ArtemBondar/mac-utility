@@ -27,6 +27,8 @@ Run `bash Tests/verify-app-bundle.sh` on a Mac with Xcode installed. It builds a
 
 Run `bash Tests/verify-settings.sh` for isolated settings persistence, folder removal and invalid-bookmark handling. This does not replace interactive permission, login-item, and Finder extension testing.
 
+Run `bash Tests/verify-finder-target.sh` for local file, folder, background and ambiguous-selection resolution. The standalone resolver is not yet wired to a production Finder extension. It rejects multiple selected items, missing paths and nonlocal volumes; resolves symbolic links; and requires its caller to verify folder authorization and revalidate access when performing an operation. Actual Finder integration, security-scoped access and behavior on cloud-backed volumes remain unverified.
+
 The menu bar shell can also be built as a Swift package with Xcode command-line tools:
 
 ```sh

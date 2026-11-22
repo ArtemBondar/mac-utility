@@ -17,6 +17,19 @@ struct SettingsStoreTests {
         defaults.set(try JSONEncoder().encode(settings), forKey: "settings.v1")
         let saved = SettingsStore(defaults: defaults)
         precondition(saved.settings.folders == [folder])
+        let groupName = "MacUtilitySharedTests.\(UUID().uuidString)"
+        guard let shared = UserDefaults(suiteName: groupName) else { fatalError("Cannot create shared test defaults") }
+        defer { shared.removePersistentDomain(forName: groupName) }
+        let publishing = SettingsStore(defaults: defaults, sharedDefaults: shared)
+        precondition(FinderConfiguration.read(from: shared)?.roots == [folder.path])
+        precondition(FinderConfiguration.read(from: shared)?.newFile == false)
+        publishing.setActions(newFile: true, newFolder: false, openTerminal: true)
+        precondition(FinderConfiguration.read(from: shared)?.newFolder == false)
+        publishing.removeFolder(id: folder.id)
+        precondition(FinderConfiguration.read(from: shared)?.roots == [])
+        // Configuration shared with the extension contains paths, never bookmark data.
+        let sharedData = shared.data(forKey: FinderConfiguration.key)!
+        precondition(!String(decoding: sharedData, as: UTF8.self).contains("bookmark"))
         precondition(!saved.checkFolder(folder), "Invalid bookmark must fail safely")
         let temp = FileManager.default.temporaryDirectory.appendingPathComponent("settings-test-\(UUID().uuidString)", isDirectory: true)
         try FileManager.default.createDirectory(at: temp, withIntermediateDirectories: true)

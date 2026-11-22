@@ -55,7 +55,7 @@ final class SettingsStore: ObservableObject {
             let url = try URL(resolvingBookmarkData: folder.bookmark, options: [.withSecurityScope, .withoutUI], relativeTo: nil, bookmarkDataIsStale: &stale)
             let granted = url.startAccessingSecurityScopedResource()
             defer { if granted { url.stopAccessingSecurityScopedResource() } }
-            guard granted, FileManager.default.fileExists(atPath: url.path) else { return false }
+            guard granted, Self.isDirectory(at: url) else { return false }
             if stale {
                 let renewed = try url.bookmarkData(options: .withSecurityScope, includingResourceValuesForKeys: nil, relativeTo: nil)
                 if let index = settings.folders.firstIndex(where: { $0.id == folder.id }) {
@@ -66,6 +66,11 @@ final class SettingsStore: ObservableObject {
             }
             return true
         } catch { return false }
+    }
+
+    static func isDirectory(at url: URL) -> Bool {
+        var directory: ObjCBool = false
+        return FileManager.default.fileExists(atPath: url.path, isDirectory: &directory) && directory.boolValue
     }
 
     private func save() {

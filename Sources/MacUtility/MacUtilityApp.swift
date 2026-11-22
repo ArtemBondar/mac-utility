@@ -52,7 +52,9 @@ struct SettingsView: View {
                         Button(L10n.text("Check Access")) {
                             message = store.checkFolder(folder) ? L10n.text("Folder access is available.") : L10n.text("Folder access could not be restored. Remove and add the folder again.")
                         }
+                        .accessibilityLabel(L10n.format("Check access for %@", folder.path))
                         Button(L10n.text("Remove")) { store.removeFolder(id: folder.id) }
+                            .accessibilityLabel(L10n.format("Remove access for %@", folder.path))
                     }
                 }
                 Button(L10n.text("Add Folder…")) { chooseFolder() }

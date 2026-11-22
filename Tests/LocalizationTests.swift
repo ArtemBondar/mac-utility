@@ -17,6 +17,12 @@ struct LocalizationTests {
         precondition(ukrainian.localizedString(forKey: key, value: nil, table: nil) == "Нова папка")
         let pattern = ukrainian.localizedString(forKey: "Could not save folder access: %@", value: nil, table: nil)
         precondition(String(format: pattern, "example").contains("example"))
+        for language in [english, ukrainian] {
+            for label in ["Check access for %@", "Remove access for %@"] {
+                let translation = language.localizedString(forKey: label, value: nil, table: nil)
+                precondition(String(format: translation, "/Test Folder").contains("/Test Folder"))
+            }
+        }
         print("PASS: language bundle lookup and formatted translation")
     }
 }

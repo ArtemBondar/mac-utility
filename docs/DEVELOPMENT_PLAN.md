@@ -2,7 +2,7 @@
 
 ## Goal and scope
 
-Build a lightweight native Swift macOS menu bar utility for creating a file or folder and opening Terminal at a Finder location. Use native controls, system appearance, accessible labels and minimal idle activity. Target macOS 13 or later initially; review deployment target during release planning.
+Build a lightweight native Swift macOS menu bar utility for creating a file or folder and opening Terminal at a Finder location. Use native controls, system appearance, accessible labels and minimal idle activity. Initial support focuses on the latest macOS release and local filesystem files and folders. Older macOS releases and cloud or network locations are outside the initial support scope. The existing macOS 13 deployment setting has not yet been changed and does not imply older-version testing or support.
 
 ## Feasibility gate
 
@@ -33,7 +33,7 @@ Estimates are for one developer and depend on the feasibility findings.
 
 ## Release checks
 
-Confirm the integration works in each supported Finder context; duplicate names never overwrite; denied permissions and read-only locations are handled; Terminal starts in the correct directory; light/dark appearance, keyboard navigation and VoiceOver work; login launch and uninstall behave correctly; and the signed release installs on a clean account. Test local, removable, network and cloud-backed folders where supported. Record limitations rather than implying universal coverage.
+Confirm the integration works in each supported Finder context on the latest macOS release with local files and folders; duplicate names never overwrite; denied permissions and read-only locations are handled; Terminal starts in the correct directory; light/dark appearance, keyboard navigation and VoiceOver work; login launch and uninstall behave correctly; and the signed release installs on a clean account. Record limitations rather than implying universal coverage.
 
 ## References
 

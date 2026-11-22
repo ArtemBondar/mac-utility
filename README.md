@@ -19,9 +19,13 @@ xcodebuild -project MacUtility.xcodeproj -scheme MacUtility -configuration Debug
 
 The resulting app is `/tmp/macutility-build/Build/Products/Debug/MacUtility.app`. Ad-hoc signing is for local testing, not a notarized distribution build. For distribution, select the appropriate team, unique identifier, signing certificate and provisioning in Xcode; archive and notarize or submit through the intended channel. Distribution signing has not yet been verified.
 
+The menu bar Settings window lets you select folders, check or remove saved access, choose future actions, and request launch at login. macOS may require login-item approval. Folder access uses app-scoped bookmarks and applies only to the containing app; no production Finder extension consumes these settings yet. Finder integration enablement, bookmark sharing across processes, folder selection and restored access in a signed app, and login-item behavior remain unverified. Initial product scope is local files on current macOS.
+
 ## Automated verification
 
 Run `bash Tests/verify-app-bundle.sh` on a Mac with Xcode installed. It builds a fresh ad-hoc signed app and verifies the executable, bundle type, minimum version, accessory configuration, signature, sandbox, and hardened runtime. The check does not verify that the menu appears or that Quit works, nor does it test a Developer ID signature or execution on macOS 13. Those require interactive testing and appropriate signing credentials.
+
+Run `bash Tests/verify-settings.sh` for isolated settings persistence, folder removal and invalid-bookmark handling. This does not replace interactive permission, login-item, and Finder extension testing.
 
 The menu bar shell can also be built as a Swift package with Xcode command-line tools:
 
@@ -29,7 +33,7 @@ The menu bar shell can also be built as a Swift package with Xcode command-line 
 swift run MacUtility
 ```
 
-Login launch, settings, extension packaging, and a distributable signed release are not implemented.
+Extension packaging and a distributable signed release are not implemented.
 
 ## Finder integration constraint
 

@@ -22,6 +22,8 @@ test "$("$plistbuddy" -c 'Print :LSMinimumSystemVersion' "$info")" = 13.0
 codesign --verify --strict --deep "$app"
 codesign -d --entitlements :- "$app" >"$test_dir/entitlements.plist" 2>/dev/null
 test "$("$plistbuddy" -c 'Print :com.apple.security.app-sandbox' "$test_dir/entitlements.plist")" = true
+test "$("$plistbuddy" -c 'Print :com.apple.security.files.user-selected.read-write' "$test_dir/entitlements.plist")" = true
+test "$("$plistbuddy" -c 'Print :com.apple.security.files.bookmarks.app-scope' "$test_dir/entitlements.plist")" = true
 codesign -dv "$app" 2>"$test_dir/signature.txt"
 grep -q 'Signature=adhoc' "$test_dir/signature.txt"
 grep -q 'runtime' "$test_dir/signature.txt"

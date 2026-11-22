@@ -1,11 +1,11 @@
 "Mac Utility" = "Mac Utility";
-"Finder integration: not installed" = "Інтеграцію з Finder не встановлено";
+"Finder integration requires setup" = "Інтеграція з Finder потребує налаштування";
 "Settings…" = "Параметри…";
 "About Mac Utility" = "Про Mac Utility";
 "Quit Mac Utility" = "Завершити Mac Utility";
 "Mac Utility Settings" = "Параметри Mac Utility";
 "Finder Integration" = "Інтеграція з Finder";
-"The Finder extension is not installed yet. These preferences will take effect when integration is available." = "Розширення Finder ще не встановлено. Ці параметри набудуть чинності, коли інтеграція стане доступною.";
+"Enable the Mac Utility Finder extension in System Settings and add folders below." = "Увімкніть розширення Mac Utility для Finder у Системних параметрах і додайте папки нижче.";
 "Choose local folders the app may access. You can remove access at any time." = "Виберіть локальні папки, до яких програма матиме доступ. Ви можете скасувати доступ будь-коли.";
 "Check Access" = "Перевірити доступ";
 "Check access for %@" = "Перевірити доступ до %@";
@@ -26,7 +26,7 @@
 "Open Login Items in System Settings to review approval." = "Відкрийте об’єкти входу в Системних параметрах, щоб перевірити дозвіл.";
 "Could not save folder access: %@" = "Не вдалося зберегти доступ до папки: %@";
 "Could not change Open at Login: %@" = "Не вдалося змінити відкриття під час входу: %@";
-"Enter a name for the new item." = "Введіть назву нового об’єкта.";
+"Enter a name for the new item in %@." = "Введіть назву нового об’єкта в папці %@.";
 "File name" = "Назва файлу";
 "Folder name" = "Назва папки";
 "Create" = "Створити";
@@ -36,3 +36,6 @@
 "An item with that name already exists." = "Об’єкт із такою назвою вже існує.";
 "Terminal could not be found." = "Не вдалося знайти Термінал.";
 "Terminal could not be opened." = "Не вдалося відкрити Термінал.";
+"Finder action is unavailable. Check the selected folder and its access in Settings." = "Дія Finder недоступна. Перевірте вибрану папку та доступ до неї в параметрах.";
+"Open Terminal in %@?" = "Відкрити Термінал у папці %@?";
+"Open Terminal" = "Відкрити Термінал";

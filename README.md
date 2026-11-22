@@ -29,6 +29,8 @@ Run `bash Tests/verify-settings.sh` for isolated settings persistence, folder re
 
 Run `bash Tests/verify-finder-target.sh` for local file, folder, background and ambiguous-selection resolution. The standalone resolver is not yet wired to a production Finder extension. It rejects multiple selected items, missing paths and nonlocal volumes; resolves symbolic links; and requires its caller to verify folder authorization and revalidate access when performing an operation. Actual Finder integration, security-scoped access and behavior on cloud-backed volumes remain unverified.
 
+Run `bash Tests/verify-file-creation.sh` to verify empty file and folder creation, validation, existing-item protection and concurrent name collisions. The creation service and native prompt are not yet connected to Finder; interactive prompting, sandbox folder authorization and end-to-end Finder actions remain unverified. The caller must hold security-scoped access to the target folder during creation.
+
 The menu bar shell can also be built as a Swift package with Xcode command-line tools:
 
 ```sh

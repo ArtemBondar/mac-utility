@@ -7,6 +7,11 @@ struct SettingsStoreTests {
         guard let defaults = UserDefaults(suiteName: name) else { fatalError("Cannot create isolated defaults") }
         defer { defaults.removePersistentDomain(forName: name) }
         let store = SettingsStore(defaults: defaults)
+        precondition(!store.showDockIcon, "Dock icon must default to hidden")
+        store.setShowDockIcon(true)
+        precondition(SettingsStore(defaults: defaults).showDockIcon, "Dock preference must persist")
+        store.setShowDockIcon(false)
+        precondition(!SettingsStore(defaults: defaults).showDockIcon, "Hidden Dock preference must persist")
         precondition(store.settings.newFile && store.settings.newFolder && store.settings.openTerminal)
         store.setActions(newFile: false, newFolder: true, openTerminal: false)
         let reloaded = SettingsStore(defaults: defaults)

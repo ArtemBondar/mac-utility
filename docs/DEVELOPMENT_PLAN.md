@@ -4,6 +4,8 @@
 
 Build a lightweight native Swift macOS menu bar utility for creating a file or folder and opening Terminal at a Finder location. Use native controls, system appearance, accessible labels and minimal idle activity. Initial support focuses on the latest macOS release and local filesystem files and folders. Older macOS releases and cloud or network locations are outside the initial support scope. The existing macOS 13 deployment setting has not yet been changed and does not imply older-version testing or support.
 
+The intended experience is that Finder actions work across local folders without requiring the user to add folders individually. Any unavoidable macOS permission should be requested as part of setup, with the actual coverage and protected-location limitations explained. The current implementation instead requires user-selected roots and does not yet meet this requirement; see [broad local access research](BROAD_LOCAL_ACCESS.md).
+
 ## Feasibility gate
 
 Apple describes Finder Sync as an extension for synchronization apps and explicitly says it is not intended as a general Finder UI modification tool. Before committing to an architecture or distribution channel, compare Finder Sync and macOS Services with signed prototypes. Test selected folders, files, Finder background clicks, sandbox access, menu placement, setup, and direct and Mac App Store distribution. Document limitations and select a supported product scope. The stub in this repository is not a working extension.
@@ -14,7 +16,7 @@ Apple describes Finder Sync as an extension for synchronization apps and explici
 - New Folder: prompt for a name and create it without overwriting.
 - Open Terminal Here: open Apple Terminal at the target location, including paths containing special characters.
 - Folder target: the selected folder; file target: its parent; Finder background: the displayed folder when supported by the integration. Define behavior for multiple selections and unsupported locations during the feasibility gate.
-- Menu bar: integration status, settings, help, and quit. Settings should include supported locations, enabled actions, and an optional login launch.
+- Menu bar: integration status, settings, help, and quit. Settings should include enabled actions, access status, and an optional login launch.
 - Explain enablement and folder access; report errors clearly. Avoid blanket permissions where narrower access suffices.
 
 ## Architecture

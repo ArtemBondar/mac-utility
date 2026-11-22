@@ -8,6 +8,8 @@
 "The Finder extension is not installed yet. These preferences will take effect when integration is available." = "The Finder extension is not installed yet. These preferences will take effect when integration is available.";
 "Choose local folders the app may access. You can remove access at any time." = "Choose local folders the app may access. You can remove access at any time.";
 "Check Access" = "Check Access";
+"Check access for %@" = "Check access for %@";
+"Remove access for %@" = "Remove access for %@";
 "Folder access is available." = "Folder access is available.";
 "Folder access could not be restored. Remove and add the folder again." = "Folder access could not be restored. Remove and add the folder again.";
 "Remove" = "Remove";

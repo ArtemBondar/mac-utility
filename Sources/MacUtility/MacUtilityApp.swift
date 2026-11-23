@@ -36,7 +36,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func application(_ application: NSApplication, open urls: [URL]) {
-        for url in urls where url.scheme == "macutility-finder" {
+        for url in urls where url.scheme == FinderActionRequest.scheme {
             FinderRequestHandler.handle(url, store: Self.sharedStore)
         }
     }
@@ -44,12 +44,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
 struct SettingsView: View {
     @ObservedObject var store: SettingsStore
+    @Environment(\.openWindow) private var openWindow
     @State private var message: String?
     @State private var loginEnabled = SMAppService.mainApp.status == .enabled
 
     var body: some View {
         Form {
             Section(L10n.text("Finder Integration")) {
+                #if DIRECT_DISTRIBUTION
+                Text(L10n.text("Enable the Mac Utility Finder extension in System Settings. Actions are available in local folders your account can access."))
+                    .foregroundStyle(.secondary)
+                #else
                 Text(L10n.text("Enable the Mac Utility Finder extension in System Settings and add folders below."))
                     .foregroundStyle(.secondary)
                 Text(L10n.text("Choose local folders the app may access. You can remove access at any time."))
@@ -66,6 +71,7 @@ struct SettingsView: View {
                     }
                 }
                 Button(L10n.text("Add Folder…")) { chooseFolder() }
+                #endif
             }
             Section(L10n.text("Finder Actions")) {
                 Toggle(L10n.text("New File"), isOn: actionBinding(\.newFile))
@@ -75,7 +81,13 @@ struct SettingsView: View {
             Section(L10n.text("General")) {
                 Toggle(L10n.text("Show Dock icon"), isOn: Binding(get: { store.showDockIcon }, set: { visible in
                     store.setShowDockIcon(visible)
-                    NSApp.setActivationPolicy(visible ? .regular : .accessory)
+                    let openSettings = openWindow
+                    DockVisibility.change(visible, setPolicy: { show in
+                        NSApp.setActivationPolicy(show ? .regular : .accessory)
+                    }, reopenSettings: {
+                        openSettings(id: "settings")
+                        NSApp.activate(ignoringOtherApps: true)
+                    })
                 }))
                 Toggle(L10n.text("Open at Login"), isOn: Binding(get: { loginEnabled }, set: { setLogin($0) }))
                 Text(L10n.text("macOS may require approval in Login Items settings.")).foregroundStyle(.secondary)

@@ -20,6 +20,9 @@ final class SettingsStore: ObservableObject {
     private let defaults: UserDefaults
     private let sharedDefaults: UserDefaults?
     private let key = "settings.v1"
+    #if DIRECT_DISTRIBUTION
+    private var configurationObserver: NSObjectProtocol?
+    #endif
 
     init(defaults: UserDefaults = .standard, sharedDefaults: UserDefaults? = nil) {
         self.defaults = defaults
@@ -30,6 +33,11 @@ final class SettingsStore: ObservableObject {
         } else {
             settings = StoredSettings()
         }
+        #if DIRECT_DISTRIBUTION
+        configurationObserver = DistributedNotificationCenter.default().addObserver(
+            forName: Notification.Name(FinderConfiguration.requestNotification), object: nil, queue: .main
+        ) { [weak self] _ in self?.publishFinderConfiguration() }
+        #endif
         publishFinderConfiguration()
     }
 
@@ -89,11 +97,17 @@ final class SettingsStore: ObservableObject {
     }
 
     private func publishFinderConfiguration() {
-        guard let shared = sharedDefaults else { return }
-        let config = FinderConfiguration(roots: settings.folders.map(\.path), newFile: settings.newFile,
+        let config = FinderConfiguration(roots: FinderConfiguration.defaultRoots ?? settings.folders.map(\.path), newFile: settings.newFile,
                                          newFolder: settings.newFolder, openTerminal: settings.openTerminal)
+        #if DIRECT_DISTRIBUTION
+        guard let data = try? JSONEncoder().encode(config) else { return }
+        DistributedNotificationCenter.default().postNotificationName(Notification.Name(FinderConfiguration.notification),
+            object: nil, userInfo: [FinderConfiguration.notificationDataKey: data], deliverImmediately: true)
+        #else
+        guard let shared = sharedDefaults else { return }
         guard (try? config.write(to: shared)) != nil else { return }
         DistributedNotificationCenter.default().postNotificationName(Notification.Name(FinderConfiguration.notification),
                                                                        object: nil, userInfo: nil, deliverImmediately: true)
+        #endif
     }
 }

@@ -12,6 +12,23 @@ struct SettingsStoreTests {
         precondition(SettingsStore(defaults: defaults).showDockIcon, "Dock preference must persist")
         store.setShowDockIcon(false)
         precondition(!SettingsStore(defaults: defaults).showDockIcon, "Hidden Dock preference must persist")
+        // Model AppKit closing the settings scene when the policy changes. The
+        // deferred reopen must restore it for both directions of the toggle.
+        for visible in [true, false] {
+            var windowIsOpen = true
+            var appliedPolicy: Bool?
+            var pending: (() -> Void)?
+            DockVisibility.change(visible, setPolicy: { newValue in
+                appliedPolicy = newValue
+                windowIsOpen = false
+            }, reopenSettings: {
+                windowIsOpen = true
+            }, schedule: { pending = $0 })
+            precondition(appliedPolicy == visible && !windowIsOpen)
+            precondition(pending != nil, "Settings reopening must be scheduled")
+            pending?()
+            precondition(windowIsOpen, "Settings must be reopened after changing Dock visibility")
+        }
         precondition(store.settings.newFile && store.settings.newFolder && store.settings.openTerminal)
         store.setActions(newFile: false, newFolder: true, openTerminal: false)
         let reloaded = SettingsStore(defaults: defaults)

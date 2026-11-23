@@ -6,6 +6,7 @@
 "Mac Utility Settings" = "Параметри Mac Utility";
 "Finder Integration" = "Інтеграція з Finder";
 "Enable the Mac Utility Finder extension in System Settings and add folders below." = "Увімкніть розширення Mac Utility для Finder у Системних параметрах і додайте папки нижче.";
+"Enable the Mac Utility Finder extension in System Settings. Actions are available in local folders your account can access." = "Увімкніть розширення Mac Utility для Finder у Системних параметрах. Дії доступні в локальних папках, до яких ваш обліковий запис має доступ.";
 "Choose local folders the app may access. You can remove access at any time." = "Виберіть локальні папки, до яких програма матиме доступ. Ви можете скасувати доступ будь-коли.";
 "Check Access" = "Перевірити доступ";
 "Check access for %@" = "Перевірити доступ до %@";
@@ -37,6 +38,7 @@
 "Terminal could not be found." = "Не вдалося знайти Термінал.";
 "Terminal could not be opened." = "Не вдалося відкрити Термінал.";
 "Finder action is unavailable. Check the selected folder and its access in Settings." = "Дія Finder недоступна. Перевірте вибрану папку та доступ до неї в параметрах.";
+"Finder action is unavailable. Check the selected location and macOS access permissions." = "Дія Finder недоступна. Перевірте вибране розташування та дозволи доступу macOS.";
 "Open Terminal in %@?" = "Відкрити Термінал у папці %@?";
 "Open Terminal" = "Відкрити Термінал";
 "Show Dock icon" = "Показувати значок у Dock";

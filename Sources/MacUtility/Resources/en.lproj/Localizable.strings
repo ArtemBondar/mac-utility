@@ -6,6 +6,7 @@
 "Mac Utility Settings" = "Mac Utility Settings";
 "Finder Integration" = "Finder Integration";
 "Enable the Mac Utility Finder extension in System Settings and add folders below." = "Enable the Mac Utility Finder extension in System Settings and add folders below.";
+"Enable the Mac Utility Finder extension in System Settings. Actions are available in local folders your account can access." = "Enable the Mac Utility Finder extension in System Settings. Actions are available in local folders your account can access.";
 "Choose local folders the app may access. You can remove access at any time." = "Choose local folders the app may access. You can remove access at any time.";
 "Check Access" = "Check Access";
 "Check access for %@" = "Check access for %@";
@@ -37,6 +38,7 @@
 "Terminal could not be found." = "Terminal could not be found.";
 "Terminal could not be opened." = "Terminal could not be opened.";
 "Finder action is unavailable. Check the selected folder and its access in Settings." = "Finder action is unavailable. Check the selected folder and its access in Settings.";
+"Finder action is unavailable. Check the selected location and macOS access permissions." = "Finder action is unavailable. Check the selected location and macOS access permissions.";
 "Open Terminal in %@?" = "Open Terminal in %@?";
 "Open Terminal" = "Open Terminal";
 "Show Dock icon" = "Show Dock icon";

@@ -3,12 +3,21 @@ import Foundation
 @main
 struct FinderConfigurationTests {
     static func main() throws {
+        #if DIRECT_DISTRIBUTION
+        precondition(FinderConfiguration.defaultRoots == ["/"])
+        precondition(!FinderConfiguration.groupIdentifier.hasPrefix("group."))
+        #else
+        precondition(FinderConfiguration.defaultRoots == nil)
+        #endif
         let name = "MacUtility.ConfigurationTests.\(UUID().uuidString)"
         guard let defaults = UserDefaults(suiteName: name) else { fatalError("Unable to create test defaults") }
         defer { defaults.removePersistentDomain(forName: name) }
         precondition(FinderConfiguration.read(from: defaults) == nil)
         let config = FinderConfiguration(roots: ["/tmp/folder with space", "/tmp/other"], newFile: true,
                                          newFolder: false, openTerminal: true)
+        let notification = FinderConfiguration.directNotificationConfiguration(try JSONEncoder().encode(config))
+        precondition(notification?.roots == ["/"] && notification?.newFolder == false)
+        precondition(FinderConfiguration.directNotificationConfiguration(Data("invalid".utf8)) == nil)
         try config.write(to: defaults)
         precondition(FinderConfiguration.read(from: defaults) == config)
         let replacement = FinderConfiguration(roots: [], newFile: false, newFolder: true, openTerminal: false)

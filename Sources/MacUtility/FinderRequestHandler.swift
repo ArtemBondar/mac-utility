@@ -8,6 +8,14 @@ enum FinderRequestHandler {
         guard let request = FinderActionRequest.parse(url), enabled(request.action, settings: store.settings) else {
             unavailable(); return
         }
+        #if DIRECT_DISTRIBUTION
+        let context: FinderTargetResolver.Context = request.context == .item ? .item : .container
+        guard let destination = FinderTargetResolver.resolve(context: context, target: request.target, selection: request.selection),
+              let directory = SecureDirectory.open(root: URL(fileURLWithPath: "/", isDirectory: true), destination: destination) else {
+            unavailable(); return
+        }
+        perform(request, destination: destination, directory: directory, releaseScope: {})
+        #else
         for folder in store.settings.folders {
             var stale = false
             guard let root = try? URL(resolvingBookmarkData: folder.bookmark,
@@ -21,32 +29,40 @@ enum FinderRequestHandler {
                 root.stopAccessingSecurityScopedResource()
                 continue
             }
+            perform(request, destination: destination, directory: directory) {
+                root.stopAccessingSecurityScopedResource()
+            }
+            return
+        }
+        unavailable()
+        #endif
+    }
+
+    private static func perform(_ request: FinderActionRequest, destination: URL,
+                                directory: SecureDirectory, releaseScope: @escaping () -> Void) {
             NSApp.activate(ignoringOtherApps: true)
             switch request.action {
             case .newFile, .newFolder:
                 let kind: FileCreation.Kind = request.action == .newFile ? .file : .folder
                 CreationPrompt.show(kind: kind, in: destination, directoryFD: directory.descriptor)
-                root.stopAccessingSecurityScopedResource()
+                releaseScope()
             case .openTerminal:
                 let confirmation = NSAlert()
                 confirmation.messageText = L10n.format("Open Terminal in %@?", destination.path)
                 confirmation.addButton(withTitle: L10n.text("Open Terminal"))
                 confirmation.addButton(withTitle: L10n.text("Cancel"))
                 guard confirmation.runModal() == .alertFirstButtonReturn else {
-                    root.stopAccessingSecurityScopedResource(); return
+                    releaseScope(); return
                 }
                 TerminalLauncher.open(destination) { result in
                     // Retain the opened directory and the scope until the handoff finishes.
                     _ = directory
-                    root.stopAccessingSecurityScopedResource()
+                    releaseScope()
                     if case .failure(let error) = result {
                         DispatchQueue.main.async { NSAlert(error: error).runModal() }
                     }
                 }
             }
-            return
-        }
-        unavailable()
     }
 
     private static func enabled(_ action: FinderActionRequest.Action, settings: StoredSettings) -> Bool {
@@ -60,7 +76,11 @@ enum FinderRequestHandler {
     private static func unavailable() {
         NSApp.activate(ignoringOtherApps: true)
         let alert = NSAlert()
+        #if DIRECT_DISTRIBUTION
+        alert.messageText = L10n.text("Finder action is unavailable. Check the selected location and macOS access permissions.")
+        #else
         alert.messageText = L10n.text("Finder action is unavailable. Check the selected folder and its access in Settings.")
+        #endif
         alert.runModal()
     }
 }

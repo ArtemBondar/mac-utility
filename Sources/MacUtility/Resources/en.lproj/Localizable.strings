@@ -1,5 +1,10 @@
 "Mac Utility" = "Mac Utility";
-"Finder integration requires setup" = "Finder integration requires setup";
+"Enable Finder extension" = "Enable Finder extension";
+"Enable Mac Utility in Finder Extensions to show its actions in Finder. You can change this later in Settings." = "Enable Mac Utility in Finder Extensions to show its actions in Finder. You can change this later in Settings.";
+"Open Finder Extension Settings" = "Open Finder Extension Settings";
+"Not Now" = "Not Now";
+"Finder extension is enabled." = "Finder extension is enabled.";
+"Finder extension is disabled." = "Finder extension is disabled.";
 "Settings…" = "Settings…";
 "About Mac Utility" = "About Mac Utility";
 "Quit Mac Utility" = "Quit Mac Utility";

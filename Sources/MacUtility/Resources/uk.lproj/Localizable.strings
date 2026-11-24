@@ -1,5 +1,10 @@
 "Mac Utility" = "Mac Utility";
-"Finder integration requires setup" = "Інтеграція з Finder потребує налаштування";
+"Enable Finder extension" = "Увімкніть розширення Finder";
+"Enable Mac Utility in Finder Extensions to show its actions in Finder. You can change this later in Settings." = "Увімкніть Mac Utility у розширеннях Finder, щоб його дії відображалися у Finder. Це можна змінити пізніше в налаштуваннях.";
+"Open Finder Extension Settings" = "Відкрити налаштування розширень Finder";
+"Not Now" = "Не зараз";
+"Finder extension is enabled." = "Розширення Finder увімкнено.";
+"Finder extension is disabled." = "Розширення Finder вимкнено.";
 "Settings…" = "Параметри…";
 "About Mac Utility" = "Про Mac Utility";
 "Quit Mac Utility" = "Завершити Mac Utility";

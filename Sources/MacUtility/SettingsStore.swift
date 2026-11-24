@@ -15,6 +15,9 @@ struct StoredSettings: Codable, Equatable {
 }
 
 final class SettingsStore: ObservableObject {
+    static func shouldOfferFinderSetup(extensionEnabled: Bool, alreadyOffered: Bool) -> Bool {
+        !extensionEnabled && !alreadyOffered
+    }
     @Published private(set) var settings: StoredSettings
     @Published private(set) var showDockIcon: Bool
     private let defaults: UserDefaults

@@ -1,0 +1,27 @@
+name: macOS checks
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [develop]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Validate release promotion
+        if: github.event_name == 'pull_request' && github.base_ref == 'main'
+        env:
+          HEAD_BRANCH: ${{ github.head_ref }}
+          HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
+          BASE_REPOSITORY: ${{ github.repository }}
+        run: |
+          [[ "$HEAD_BRANCH" == develop && "$HEAD_REPOSITORY" == "$BASE_REPOSITORY" ]] || { echo 'Only develop can be promoted to main'; exit 1; }
+      - name: Build and run automated checks
+        run: bash scripts/ci-checks.sh

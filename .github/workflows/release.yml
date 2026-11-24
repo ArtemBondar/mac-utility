@@ -1,0 +1,65 @@
+name: Publish release
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Release version
+        required: true
+        default: '1.0.0'
+permissions:
+  contents: read
+jobs:
+  release:
+    runs-on: macos-latest
+    timeout-minutes: 30
+    env:
+      RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && format('v{0}', inputs.version) || github.ref_name }}
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Verify tag name
+        run: |
+          [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo 'Expected a version tag, e.g. v1.2.3'; exit 1; }
+          if [[ "$GITHUB_EVENT_NAME" == workflow_dispatch && "$GITHUB_REF" != refs/heads/main ]]; then
+            echo 'Manual releases must run from main'; exit 1
+          fi
+          git merge-base --is-ancestor "$GITHUB_SHA" refs/remotes/origin/main || \
+            { echo 'Tag must point to a commit reachable from main'; exit 1; }
+          if git rev-parse --verify "refs/tags/$RELEASE_TAG" >/dev/null 2>&1; then
+            [[ "$(git rev-parse "$RELEASE_TAG^{commit}")" == "$GITHUB_SHA" ]] || \
+              { echo 'Existing release tag points to a different commit'; exit 1; }
+          fi
+      - name: Run automated checks
+        run: bash scripts/ci-checks.sh
+      - name: Verify release version and notes
+        run: python3 scripts/verify_release_version.py "$RELEASE_TAG"
+      - name: Build direct-download app
+        run: |
+          bash scripts/build-direct-preview.sh "$RUNNER_TEMP/macutility-release"
+          mv "$RUNNER_TEMP/macutility-release/MacUtility-direct-preview.zip" "$RUNNER_TEMP/MacUtility-${RELEASE_TAG#v}.zip"
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          artifact="$RUNNER_TEMP/MacUtility-${RELEASE_TAG#v}.zip"
+          notes="docs/releases/$RELEASE_TAG.md"
+          # The release may already exist when its tag was created in GitHub's UI.
+          # Existing assets are never silently replaced.
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release upload "$RELEASE_TAG" "$artifact"
+            gh release edit "$RELEASE_TAG" --draft=false --title "${RELEASE_TAG#v}" --notes-file "$notes"
+          else
+            if [[ "$GITHUB_EVENT_NAME" == workflow_dispatch ]]; then
+              gh release create "$RELEASE_TAG" "$artifact" --target "$GITHUB_SHA" \
+                --title "${RELEASE_TAG#v}" --notes-file "$notes"
+            else
+              gh release create "$RELEASE_TAG" "$artifact" --verify-tag \
+                --title "${RELEASE_TAG#v}" --notes-file "$notes"
+            fi
+          fi

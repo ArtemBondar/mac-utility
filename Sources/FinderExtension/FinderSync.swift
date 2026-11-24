@@ -1,8 +1,10 @@
 import Cocoa
 import FinderSync
+import OSLog
 
 @objc(FinderSync)
 final class FinderSync: FIFinderSync {
+    private let logger = Logger(subsystem: "com.example.MacUtility", category: "FinderAction")
     private let defaults = UserDefaults(suiteName: FinderConfiguration.groupIdentifier)
     private var config: FinderConfiguration?
 
@@ -61,9 +63,17 @@ final class FinderSync: FIFinderSync {
         func add(_ key: String, _ action: FinderMenuAction.Action, _ enabled: Bool) {
             guard enabled else { return }
             let title = Bundle(for: FinderSync.self).localizedString(forKey: key, value: key, table: nil)
-            let item = NSMenuItem(title: title, action: #selector(performAction(_:)), keyEquivalent: "")
+            let selector: Selector
+            switch (action, context) {
+            case (.newFile, .item): selector = #selector(newFileForItem(_:))
+            case (.newFile, .container): selector = #selector(newFileInContainer(_:))
+            case (.newFolder, .item): selector = #selector(newFolderForItem(_:))
+            case (.newFolder, .container): selector = #selector(newFolderInContainer(_:))
+            case (.openTerminal, .item): selector = #selector(openTerminalForItem(_:))
+            case (.openTerminal, .container): selector = #selector(openTerminalInContainer(_:))
+            }
+            let item = NSMenuItem(title: title, action: selector, keyEquivalent: "")
             item.target = self
-            item.tag = FinderMenuAction.tag(action: action, context: context)
             menu.addItem(item)
         }
         add("New File", .newFile, config.newFile)
@@ -72,15 +82,32 @@ final class FinderSync: FIFinderSync {
         return menu.items.isEmpty ? nil : menu
     }
 
-    @objc private func performAction(_ sender: NSMenuItem) {
+    @objc private func newFileForItem(_ sender: Any?) { perform(.newFile, in: .item) }
+    @objc private func newFileInContainer(_ sender: Any?) { perform(.newFile, in: .container) }
+    @objc private func newFolderForItem(_ sender: Any?) { perform(.newFolder, in: .item) }
+    @objc private func newFolderInContainer(_ sender: Any?) { perform(.newFolder, in: .container) }
+    @objc private func openTerminalForItem(_ sender: Any?) { perform(.openTerminal, in: .item) }
+    @objc private func openTerminalInContainer(_ sender: Any?) { perform(.openTerminal, in: .container) }
+
+    // Finder invokes the selector across processes. Its sender can differ
+    // from the menu item that the extension constructed.
+    private func perform(_ action: FinderMenuAction.Action, in context: FinderMenuAction.Context) {
         #if DIRECT_DISTRIBUTION
         let scheme = "macutility-finder-direct"
         #else
         let scheme = "macutility-finder"
         #endif
         let controller = FIFinderSyncController.default()
-        guard let url = FinderMenuAction.requestURL(tag: sender.tag, target: controller.targetedURL(),
-                                                     selection: controller.selectedItemURLs() ?? [], scheme: scheme) else { return }
-        NSWorkspace.shared.open(url)
+        logger.notice("Finder invoked a menu action")
+        guard let url = FinderMenuAction.requestURL(action: action, context: context, target: controller.targetedURL(),
+                                                    selection: controller.selectedItemURLs() ?? [], scheme: scheme) else {
+            logger.error("Finder action did not have a valid target")
+            return
+        }
+        if NSWorkspace.shared.open(url) {
+            logger.notice("Launch Services accepted the Finder action")
+        } else {
+            logger.error("Launch Services rejected the Finder action")
+        }
     }
 }

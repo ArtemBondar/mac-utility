@@ -26,7 +26,7 @@ Run `bash Tests/verify-app-bundle.sh` on a Mac with Xcode installed. It builds a
 
 Run `bash Tests/verify-finder-configuration.sh`, `bash Tests/verify-finder-requests.sh` to check shared configuration, untrusted request parsing, containment and descriptor-anchored creation. The URL scheme is not sender-authenticated: the host validates user-granted scope and preferences, and requires confirmation before each operation. Do not treat these tests as proof of live App Group or Finder behavior.
 
-The Finder request checks also exercise the direct-build action pipeline, including physical paths behind macOS symbolic links. A separately signed diagnostic copy received URL events both at launch and while running; actual Finder menu actions still need interactive verification in the packaged app.
+The Finder request checks also exercise the direct-build action pipeline, including physical paths behind macOS symbolic links. The ad-hoc signed Direct preview was tested through Finder with selected items and folder backgrounds. See [Finder verification](docs/VERIFICATION.md#finder-actions) for the tested contexts and preview registration notes.
 
 Run `bash Tests/verify-settings.sh` for isolated settings persistence, folder removal and invalid-bookmark handling. This does not replace interactive permission, login-item, and Finder extension testing.
 
@@ -34,7 +34,7 @@ Run `bash Tests/verify-finder-target.sh` for local file, folder, background and 
 
 Run `bash Tests/verify-file-creation.sh` to verify empty file and folder creation, validation, existing-item protection and concurrent name collisions. The creation service and native prompt are wired to the host request handler; interactive prompting, sandbox folder authorization and end-to-end Finder actions remain unverified. The caller must hold security-scoped access to the target folder during creation.
 
-Run `bash Tests/verify-terminal-launcher.sh` for URL handoff, special characters, invalid targets, missing Terminal, and launch failures. The launcher uses Launch Services to pass the directory URL to Terminal without interpolating shell commands or requesting Automation permission. A standalone unsandboxed probe returned successful handoff on this Mac; Terminal's working directory could not be inspected in this environment. A successful handoff does not establish the working directory. Sandboxed behavior, permission failures, and Finder integration remain unverified; the caller must hold folder access and report the localized error on failure.
+Run `bash Tests/verify-terminal-launcher.sh` for URL handoff, special characters, invalid targets, missing Terminal, and launch failures. The launcher uses Launch Services to pass the directory URL to Terminal without interpolating shell commands or requesting Automation permission. Live Finder testing in the Direct preview confirmed Terminal's working directory for both a selected folder and the current folder. Live sandboxed behavior and macOS permission failures remain unverified. The caller must hold folder access and report the localized error on failure.
 
 The menu bar shell can also be built as a Swift package with Xcode command-line tools:
 

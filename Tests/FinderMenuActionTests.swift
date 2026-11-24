@@ -7,9 +7,7 @@ struct FinderMenuActionTests {
         let file = folder.appendingPathComponent("a #.txt")
         for action in FinderMenuAction.Action.allCases {
             for context in [FinderMenuAction.Context.item, .container] {
-                // Model Finder copying only the menu item's supported tag.
-                let copiedTag = FinderMenuAction.tag(action: action, context: context)
-                guard let url = FinderMenuAction.requestURL(tag: copiedTag, target: folder,
+                guard let url = FinderMenuAction.requestURL(action: action, context: context, target: folder,
                     selection: context == .item ? [file] : [], scheme: FinderActionRequest.scheme),
                       let request = FinderActionRequest.parse(url) else { fatalError("Missing request") }
                 let expected: FinderActionRequest.Action = action == .newFile ? .newFile : action == .newFolder ? .newFolder : .openTerminal
@@ -18,9 +16,11 @@ struct FinderMenuActionTests {
                 precondition(request.selection == (context == .item ? [file] : []))
             }
         }
-        precondition(FinderMenuAction.requestURL(tag: 0, target: folder, selection: [], scheme: FinderActionRequest.scheme) == nil)
-        precondition(FinderMenuAction.requestURL(tag: 11, target: folder, selection: [], scheme: FinderActionRequest.scheme) == nil)
-        precondition(FinderMenuAction.requestURL(tag: 21, target: nil, selection: [], scheme: FinderActionRequest.scheme) == nil)
-        print("PASS: copied Finder menu tags dispatch all actions and contexts")
+        precondition(FinderMenuAction.requestURL(action: .newFile, context: .item, target: folder, selection: [], scheme: FinderActionRequest.scheme) == nil)
+        precondition(FinderMenuAction.requestURL(action: .newFile, context: .item, target: folder, selection: [file, file], scheme: FinderActionRequest.scheme) == nil)
+        precondition(FinderMenuAction.requestURL(action: .newFile, context: .container, target: nil, selection: [file], scheme: FinderActionRequest.scheme) == nil)
+        let containerWithSelection = FinderMenuAction.requestURL(action: .newFile, context: .container, target: folder, selection: [file], scheme: FinderActionRequest.scheme)
+        precondition(containerWithSelection.flatMap(FinderActionRequest.parse)?.selection == [])
+        print("PASS: Finder menu callbacks encode all actions and contexts")
     }
 }

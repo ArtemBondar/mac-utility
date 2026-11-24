@@ -2,6 +2,7 @@ import SwiftUI
 import AppKit
 import ServiceManagement
 import FinderSync
+import OSLog
 
 @main
 struct MacUtilityApp: App {
@@ -29,6 +30,7 @@ struct MacUtilityApp: App {
 }
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
+    private let logger = Logger(subsystem: "com.example.MacUtility", category: "FinderAction")
     static let sharedStore = SettingsStore(sharedDefaults: UserDefaults(suiteName: FinderConfiguration.groupIdentifier))
     private static let settingsWindow = SettingsWindowOwner<NSWindowController>()
 
@@ -72,6 +74,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func application(_ application: NSApplication, open urls: [URL]) {
         for url in urls where url.scheme == FinderActionRequest.scheme {
+            logger.notice("Mac Utility received a Finder action")
             FinderRequestHandler.handle(url, store: Self.sharedStore)
         }
     }

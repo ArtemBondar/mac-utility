@@ -1,10 +1,10 @@
 # Mac Utility
 
-A lightweight macOS menu bar utility in early development. Finder actions include New File, New Folder, Open Terminal Here, and Copy Folder Path.
+A lightweight macOS menu bar utility. Finder actions include New File, New Folder, Open Terminal Here, and Copy Folder Path.
 
 ## Current state
 
-An initial Finder Sync extension and host action handoff are included. This integration is experimental and has not been tested end-to-end with a provisioned App Group, real folder grants, or a signed distribution build. Initial product scope is local files on current macOS. `FinderSyncPrototype/` remains an unrelated research stub.
+Version 1.0.0 uses the Direct configuration for local files on current macOS. Finder actions have been tested in the Direct build, including user confirmation of one-click Terminal and path copying. The GitHub download is ad-hoc signed and not notarized. The sandboxed Debug/Release configurations and provisioned App Group distribution remain unverified. `FinderSyncPrototype/` remains an unrelated research stub.
 
 ## Build and run
 
@@ -14,7 +14,7 @@ The experimental `Direct` Xcode configuration is intended for testing broad loca
 
 On first launch, if the Finder extension is disabled, the app offers to open macOS extension settings. Enable Mac Utility there; the app cannot enable the extension on your behalf. The menu bar and Settings show its status, and Settings can reopen extension management. macOS may separately request access to protected locations.
 
-Copy Folder Path puts the current or selected folder's absolute path on the clipboard without a prompt. When a file is selected, it copies that file's containing folder. This action runs in the Finder extension, not through the app's public URL scheme. Live Finder and protected-folder clipboard behavior remain unverified.
+Copy Folder Path puts the current or selected folder's absolute path on the clipboard without a prompt. When a file is selected, it copies that file's containing folder. This action runs in the Finder extension, not through the app's public URL scheme. The action was confirmed working in user testing; protected-folder behavior remains unverified.
 
 Run `bash Tests/verify-dock-window.sh` in a graphical macOS session to check that an AppKit settings window remains visible through Dock activation-policy changes. This exercises the window lifecycle, not the packaged app's toggle.
 
@@ -46,7 +46,7 @@ The menu bar shell can also be built as a Swift package with Xcode command-line 
 swift run MacUtility
 ```
 
-A distributable signed release is not implemented.
+The GitHub download is ad-hoc signed. Developer ID signing and notarization are not implemented.
 
 See [release preparation](docs/RELEASE.md) for a read-only preflight and the outstanding signing, notarization, and clean-account checks.
 

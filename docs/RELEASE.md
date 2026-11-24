@@ -1,6 +1,6 @@
 # Release preparation
 
-Status: **not ready for release**. There is no production Finder extension, and the current app does not yet offer Finder actions. This document is a checklist, not evidence of a completed release. Initial scope is local files and folders on current macOS.
+Version 1.0.0 uses the Direct configuration for local files and folders on current macOS. It includes Finder file/folder creation, Terminal, and path copying. The GitHub artifact is ad-hoc signed and not notarized. Developer ID distribution and clean-account installation remain separate validation work.
 
 ## Read-only preflight
 
@@ -15,7 +15,7 @@ Run `python3 -m unittest discover -s Tests -p 'test_release_preflight.py'` to te
 3. Archive the actual release build, including any nested extension, with Developer ID and hardened runtime. Verify signatures and entitlements of the exported app and nested code. Do not mistake an ad-hoc development signature for a distribution signature.
 4. Submit the exported artifact to Apple's notary service using Xcode or `notarytool`; inspect the result and log. Staple and validate the ticket on a supported artifact, and verify the distributed artifact with Gatekeeper. A ZIP can be submitted but cannot itself be stapled; see Apple's workflow for the applicable artifact.
 5. On a clean macOS account, download and install the actual artifact, enable Finder integration, grant and revoke access, exercise each action and both languages, and verify quit, login-item settings, and removal. Record the OS version, artifact and results.
-6. Write user-facing installation, permissions, troubleshooting, supported-context, and uninstall instructions after the actual integration and distribution method are known. Do not publish a release until these checks pass.
+6. Verify user-facing installation, permissions, troubleshooting, supported-context, and uninstall instructions against the final artifact. These checks are required before claiming Developer ID signed and notarized distribution.
 
 ## App Store assessment
 

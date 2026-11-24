@@ -8,6 +8,8 @@ An initial Finder Sync extension and host action handoff are included. This inte
 
 ## Build and run
 
+Local Direct previews receive a numeric build version shared by the host and extension. If Finder still displays an older preview's actions after opening a new app copy, run `python3 scripts/activate_direct_preview.py /absolute/path/to/MacUtility.app`. This verifies the signature, unregisters other Direct preview copies from PlugInKit and Launch Services, stops only those stale Direct app/extension processes, and registers the selected copy. It preserves app files, preferences, the sandboxed distribution, extension enablement, and privacy permissions. Keep the selected app in place while testing.
+
 The experimental `Direct` Xcode configuration is intended for testing broad local Finder coverage without selecting folders individually. Its host runs **without App Sandbox**, while its Finder extension remains sandboxed; it is not suitable for Mac App Store distribution. Normal macOS privacy controls and filesystem permissions still apply. The extension monitors `/` and sends requests to a dedicated URL scheme; the host validates the destination and enabled actions. File and folder creation prompt for a name; Terminal opens without a confirmation. The `Debug` and `Release` sandboxed configurations are unchanged.
 
 On first launch, if the Finder extension is disabled, the app offers to open macOS extension settings. Enable Mac Utility there; the app cannot enable the extension on your behalf. The menu bar and Settings show its status, and Settings can reopen extension management. macOS may separately request access to protected locations.

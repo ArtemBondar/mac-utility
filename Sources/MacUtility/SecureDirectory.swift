@@ -10,9 +10,14 @@ final class SecureDirectory {
 
     static func open(root: URL, destination: URL) -> SecureDirectory? {
         guard root.isFileURL, destination.isFileURL else { return nil }
-        let rootComponents = root.standardizedFileURL.pathComponents
-        let targetComponents = destination.standardizedFileURL.pathComponents
-        guard targetComponents.count >= rootComponents.count,
+        // `standardizedFileURL` can turn /private/var back into /var, a
+        // symlink that O_NOFOLLOW correctly rejects. Callers pass physical
+        // paths; reject traversal explicitly instead of rewriting them.
+        let rootComponents = root.pathComponents
+        let targetComponents = destination.pathComponents
+        guard !rootComponents.contains("."), !rootComponents.contains(".."),
+              !targetComponents.contains("."), !targetComponents.contains(".."),
+              targetComponents.count >= rootComponents.count,
               Array(targetComponents.prefix(rootComponents.count)) == rootComponents else { return nil }
         var fd = Darwin.open(root.path, O_RDONLY | O_DIRECTORY | O_CLOEXEC | O_NOFOLLOW)
         guard fd >= 0 else { return nil }

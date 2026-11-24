@@ -1,11 +1,17 @@
 "Mac Utility" = "Mac Utility";
-"Finder integration requires setup" = "Finder integration requires setup";
+"Enable Finder extension" = "Enable Finder extension";
+"Enable Mac Utility in Finder Extensions to show its actions in Finder. You can change this later in Settings." = "Enable Mac Utility in Finder Extensions to show its actions in Finder. You can change this later in Settings.";
+"Open Finder Extension Settings" = "Open Finder Extension Settings";
+"Not Now" = "Not Now";
+"Finder extension is enabled." = "Finder extension is enabled.";
+"Finder extension is disabled." = "Finder extension is disabled.";
 "Settings…" = "Settings…";
 "About Mac Utility" = "About Mac Utility";
 "Quit Mac Utility" = "Quit Mac Utility";
 "Mac Utility Settings" = "Mac Utility Settings";
 "Finder Integration" = "Finder Integration";
 "Enable the Mac Utility Finder extension in System Settings and add folders below." = "Enable the Mac Utility Finder extension in System Settings and add folders below.";
+"Enable the Mac Utility Finder extension in System Settings. Actions are available in local folders your account can access." = "Enable the Mac Utility Finder extension in System Settings. Actions are available in local folders your account can access.";
 "Choose local folders the app may access. You can remove access at any time." = "Choose local folders the app may access. You can remove access at any time.";
 "Check Access" = "Check Access";
 "Check access for %@" = "Check access for %@";
@@ -18,6 +24,7 @@
 "New File" = "New File";
 "New Folder" = "New Folder";
 "Open Terminal Here" = "Open Terminal Here";
+"Copy Folder Path" = "Copy Folder Path";
 "General" = "General";
 "Open at Login" = "Open at Login";
 "macOS may require approval in Login Items settings." = "macOS may require approval in Login Items settings.";
@@ -37,6 +44,5 @@
 "Terminal could not be found." = "Terminal could not be found.";
 "Terminal could not be opened." = "Terminal could not be opened.";
 "Finder action is unavailable. Check the selected folder and its access in Settings." = "Finder action is unavailable. Check the selected folder and its access in Settings.";
-"Open Terminal in %@?" = "Open Terminal in %@?";
-"Open Terminal" = "Open Terminal";
+"Finder action is unavailable. Check the selected location and macOS access permissions." = "Finder action is unavailable. Check the selected location and macOS access permissions.";
 "Show Dock icon" = "Show Dock icon";

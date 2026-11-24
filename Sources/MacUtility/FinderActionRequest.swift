@@ -2,6 +2,11 @@ import Foundation
 
 /// Treat URL-scheme input as untrusted; callers must still check folder grants.
 struct FinderActionRequest {
+    #if DIRECT_DISTRIBUTION
+    static let scheme = "macutility-finder-direct"
+    #else
+    static let scheme = "macutility-finder"
+    #endif
     enum Action: String { case newFile, newFolder, openTerminal }
     enum Context: String { case item, container }
     let action: Action
@@ -11,7 +16,7 @@ struct FinderActionRequest {
 
     static func parse(_ url: URL) -> FinderActionRequest? {
         guard let parts = URLComponents(url: url, resolvingAgainstBaseURL: false),
-              parts.scheme == "macutility-finder", parts.host == "action",
+              parts.scheme == scheme, parts.host == "action",
               parts.path.isEmpty, parts.user == nil, parts.password == nil,
               parts.port == nil, parts.fragment == nil else { return nil }
         let items = parts.queryItems ?? []

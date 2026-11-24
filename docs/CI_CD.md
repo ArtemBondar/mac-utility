@@ -1,4 +1,4 @@
-# CI and draft preview releases
+# CI and releases
 
 Feature pull requests target `develop`; only a pull request from this repository's `develop` branch may promote changes to `main`. Pull requests targeting either branch run macOS checks, and the promotion check fails other PRs to `main`. Pushes to `develop` run the same checks after a merge, and the checks can also be started manually. Configure branch protection separately to require the checks and restrict direct pushes; a workflow alone cannot enforce branch protection.
 
@@ -6,8 +6,8 @@ Feature pull requests target `develop`; only a pull request from this repository
 
 The workflow runs `bash scripts/ci-checks.sh`, including the feature, localization, bundle and pipeline tests. It builds and ad-hoc signs test bundles, but does not validate the provisioned App Group or live Finder actions. GitHub-hosted runner availability and the Xcode version supplied by `macos-latest` can change. No secrets are used in pull-request jobs.
 
-Pushing a version tag such as `v1.2.3` triggers the release workflow. The tag must point to a commit reachable from `main`. After the same checks pass, it builds a Release configuration preview and creates a **draft** GitHub release containing `MacUtility-preview.zip`. The workflow does not publish the draft. A duplicate release tag fails instead of overwriting an existing release. Review the tag's commit and artifact before taking any further action.
+Pushing a version tag such as `v1.0.0` triggers the release workflow. You can also run **Publish release** manually from `main` with version `1.0.0`; that run creates the tag at the checked commit. The release commit must be reachable from `main`, all six app/extension marketing versions must match the requested version, and `docs/releases/v1.0.0.md` must exist. An existing tag pointing to a different commit is rejected.
 
-The artifact is **ad-hoc signed and not notarized**. The App Group identifier and provisioning are not production-ready, and Finder behavior remains unverified. It is for local evaluation, not a production release. It does not use Developer ID credentials and is not an App Store submission. Follow [release preparation](RELEASE.md) for signing, notarization, permission and clean-account validation before distribution.
+After the checks pass, the workflow builds the Direct configuration and publishes `MacUtility-1.0.0.zip` with the version's release notes. If a release already exists for the same tag, its asset is uploaded and its notes updated. Existing assets are never silently overwritten. The artifact is **ad-hoc signed and not notarized**; it does not use Developer ID credentials and is not an App Store submission. Follow [release preparation](RELEASE.md) for Developer ID signing, notarization, and clean-account validation.
 
-To test the preview packaging locally, run `bash scripts/build-preview.sh /tmp/macutility-preview-output` with a path that does not already exist. Run `python3 -m unittest discover -s Tests -p 'test_ci_pipeline.py'` for pipeline contract and packaging regression checks.
+To build the Direct artifact locally, run `bash scripts/build-direct-preview.sh /tmp/macutility-release-output` with a path that does not exist. Run `python3 scripts/verify_release_version.py v1.0.0` and `python3 -m unittest discover -s Tests -p 'test_*.py'` for release metadata and pipeline regression checks.

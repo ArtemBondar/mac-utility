@@ -7,11 +7,42 @@ struct SettingsStoreTests {
         guard let defaults = UserDefaults(suiteName: name) else { fatalError("Cannot create isolated defaults") }
         defer { defaults.removePersistentDomain(forName: name) }
         let store = SettingsStore(defaults: defaults)
+        precondition(SettingsStore.shouldOfferFinderSetup(extensionEnabled: false, alreadyOffered: false))
+        precondition(!SettingsStore.shouldOfferFinderSetup(extensionEnabled: true, alreadyOffered: false))
+        precondition(!SettingsStore.shouldOfferFinderSetup(extensionEnabled: false, alreadyOffered: true))
         precondition(!store.showDockIcon, "Dock icon must default to hidden")
         store.setShowDockIcon(true)
         precondition(SettingsStore(defaults: defaults).showDockIcon, "Dock preference must persist")
         store.setShowDockIcon(false)
         precondition(!SettingsStore(defaults: defaults).showDockIcon, "Hidden Dock preference must persist")
+        // Keep one controller alive across policy changes; SwiftUI scene handles
+        // can become invalid when the operating system orders the window out.
+        final class Controller {}
+        let owner = SettingsWindowOwner<Controller>()
+        weak var retained: Controller?
+        do { retained = owner.getOrCreate { Controller() } }
+        precondition(retained != nil, "Settings controller must be retained")
+        var creations = 0
+        let second = owner.getOrCreate { creations += 1; return Controller() }
+        precondition(retained === second && creations == 0,
+                     "Settings controller must be retained and reused")
+        // Model AppKit closing the settings scene when the policy changes. The
+        // deferred reopen must restore it for both directions of the toggle.
+        for visible in [true, false] {
+            var windowIsOpen = true
+            var appliedPolicy: Bool?
+            var pending: (() -> Void)?
+            DockVisibility.change(visible, setPolicy: { newValue in
+                appliedPolicy = newValue
+                windowIsOpen = false
+            }, reopenSettings: {
+                windowIsOpen = true
+            }, schedule: { pending = $0 })
+            precondition(appliedPolicy == visible && !windowIsOpen)
+            precondition(pending != nil, "Settings reopening must be scheduled")
+            pending?()
+            precondition(windowIsOpen, "Settings must be reopened after changing Dock visibility")
+        }
         precondition(store.settings.newFile && store.settings.newFolder && store.settings.openTerminal)
         store.setActions(newFile: false, newFolder: true, openTerminal: false)
         let reloaded = SettingsStore(defaults: defaults)

@@ -1,11 +1,17 @@
 "Mac Utility" = "Mac Utility";
-"Finder integration requires setup" = "Інтеграція з Finder потребує налаштування";
+"Enable Finder extension" = "Увімкніть розширення Finder";
+"Enable Mac Utility in Finder Extensions to show its actions in Finder. You can change this later in Settings." = "Увімкніть Mac Utility у розширеннях Finder, щоб його дії відображалися у Finder. Це можна змінити пізніше в налаштуваннях.";
+"Open Finder Extension Settings" = "Відкрити налаштування розширень Finder";
+"Not Now" = "Не зараз";
+"Finder extension is enabled." = "Розширення Finder увімкнено.";
+"Finder extension is disabled." = "Розширення Finder вимкнено.";
 "Settings…" = "Параметри…";
 "About Mac Utility" = "Про Mac Utility";
 "Quit Mac Utility" = "Завершити Mac Utility";
 "Mac Utility Settings" = "Параметри Mac Utility";
 "Finder Integration" = "Інтеграція з Finder";
 "Enable the Mac Utility Finder extension in System Settings and add folders below." = "Увімкніть розширення Mac Utility для Finder у Системних параметрах і додайте папки нижче.";
+"Enable the Mac Utility Finder extension in System Settings. Actions are available in local folders your account can access." = "Увімкніть розширення Mac Utility для Finder у Системних параметрах. Дії доступні в локальних папках, до яких ваш обліковий запис має доступ.";
 "Choose local folders the app may access. You can remove access at any time." = "Виберіть локальні папки, до яких програма матиме доступ. Ви можете скасувати доступ будь-коли.";
 "Check Access" = "Перевірити доступ";
 "Check access for %@" = "Перевірити доступ до %@";
@@ -18,6 +24,7 @@
 "New File" = "Новий файл";
 "New Folder" = "Нова папка";
 "Open Terminal Here" = "Відкрити Термінал тут";
+"Copy Folder Path" = "Копіювати шлях до папки";
 "General" = "Загальні";
 "Open at Login" = "Відкривати під час входу";
 "macOS may require approval in Login Items settings." = "macOS може вимагати дозволу в параметрах об’єктів входу.";
@@ -37,6 +44,5 @@
 "Terminal could not be found." = "Не вдалося знайти Термінал.";
 "Terminal could not be opened." = "Не вдалося відкрити Термінал.";
 "Finder action is unavailable. Check the selected folder and its access in Settings." = "Дія Finder недоступна. Перевірте вибрану папку та доступ до неї в параметрах.";
-"Open Terminal in %@?" = "Відкрити Термінал у папці %@?";
-"Open Terminal" = "Відкрити Термінал";
+"Finder action is unavailable. Check the selected location and macOS access permissions." = "Дія Finder недоступна. Перевірте вибране розташування та дозволи доступу macOS.";
 "Show Dock icon" = "Показувати значок у Dock";

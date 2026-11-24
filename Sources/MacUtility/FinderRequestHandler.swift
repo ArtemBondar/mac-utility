@@ -4,7 +4,10 @@ import AppKit
 /// checked against the current preferences and an active user-granted scope.
 @MainActor
 enum FinderRequestHandler {
-    static func handle(_ url: URL, store: SettingsStore) {
+    static func handle(_ url: URL, store: SettingsStore,
+                       launchTerminal: @escaping (URL, @escaping (Result<Void, TerminalLauncher.Failure>) -> Void) -> Void = { directory, completion in
+                           TerminalLauncher.open(directory, completion: completion)
+                       }) {
         guard let request = FinderActionRequest.parse(url), enabled(request.action, settings: store.settings) else {
             unavailable(); return
         }
@@ -14,7 +17,7 @@ enum FinderRequestHandler {
               let directory = SecureDirectory.open(root: URL(fileURLWithPath: "/", isDirectory: true), destination: destination) else {
             unavailable(); return
         }
-        perform(request, destination: destination, directory: directory, releaseScope: {})
+        perform(request, destination: destination, directory: directory, releaseScope: {}, launchTerminal: launchTerminal)
         #else
         for folder in store.settings.folders {
             var stale = false
@@ -32,9 +35,9 @@ enum FinderRequestHandler {
                 root.stopAccessingSecurityScopedResource()
                 continue
             }
-            perform(request, destination: destination, directory: directory) {
+            perform(request, destination: destination, directory: directory, releaseScope: {
                 root.stopAccessingSecurityScopedResource()
-            }
+            }, launchTerminal: launchTerminal)
             return
         }
         unavailable()
@@ -42,27 +45,24 @@ enum FinderRequestHandler {
     }
 
     private static func perform(_ request: FinderActionRequest, destination: URL,
-                                directory: SecureDirectory, releaseScope: @escaping () -> Void) {
-            NSApp.activate(ignoringOtherApps: true)
+                                directory: SecureDirectory, releaseScope: @escaping () -> Void,
+                                launchTerminal: @escaping (URL, @escaping (Result<Void, TerminalLauncher.Failure>) -> Void) -> Void) {
             switch request.action {
             case .newFile, .newFolder:
+                NSApp.activate(ignoringOtherApps: true)
                 let kind: FileCreation.Kind = request.action == .newFile ? .file : .folder
                 CreationPrompt.show(kind: kind, in: destination, directoryFD: directory.descriptor)
                 releaseScope()
             case .openTerminal:
-                let confirmation = NSAlert()
-                confirmation.messageText = L10n.format("Open Terminal in %@?", destination.path)
-                confirmation.addButton(withTitle: L10n.text("Open Terminal"))
-                confirmation.addButton(withTitle: L10n.text("Cancel"))
-                guard confirmation.runModal() == .alertFirstButtonReturn else {
-                    releaseScope(); return
-                }
-                TerminalLauncher.open(destination) { result in
+                launchTerminal(destination) { result in
                     // Retain the opened directory and the scope until the handoff finishes.
                     _ = directory
                     releaseScope()
                     if case .failure(let error) = result {
-                        DispatchQueue.main.async { NSAlert(error: error).runModal() }
+                        DispatchQueue.main.async {
+                            NSApp.activate(ignoringOtherApps: true)
+                            NSAlert(error: error).runModal()
+                        }
                     }
                 }
             }

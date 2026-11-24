@@ -8,7 +8,7 @@ An initial Finder Sync extension and host action handoff are included. This inte
 
 ## Build and run
 
-The experimental `Direct` Xcode configuration is intended for testing broad local Finder coverage without selecting folders individually. Its host runs **without App Sandbox**, while its Finder extension remains sandboxed; it is not suitable for Mac App Store distribution. Normal macOS privacy controls and filesystem permissions still apply. The extension monitors `/` and sends requests to a dedicated URL scheme; the host validates the destination and enabled actions and asks for confirmation. Finder menu coverage, distributed preference updates and end-to-end actions remain unverified. The `Debug` and `Release` sandboxed configurations are unchanged.
+The experimental `Direct` Xcode configuration is intended for testing broad local Finder coverage without selecting folders individually. Its host runs **without App Sandbox**, while its Finder extension remains sandboxed; it is not suitable for Mac App Store distribution. Normal macOS privacy controls and filesystem permissions still apply. The extension monitors `/` and sends requests to a dedicated URL scheme; the host validates the destination and enabled actions. File and folder creation prompt for a name; Terminal opens without a confirmation. The `Debug` and `Release` sandboxed configurations are unchanged.
 
 On first launch, if the Finder extension is disabled, the app offers to open macOS extension settings. Enable Mac Utility there; the app cannot enable the extension on your behalf. The menu bar and Settings show its status, and Settings can reopen extension management. macOS may separately request access to protected locations.
 
@@ -24,7 +24,7 @@ The menu bar Settings window lets you select folders, check or remove saved acce
 
 Run `bash Tests/verify-app-bundle.sh` on a Mac with Xcode installed. It builds a fresh ad-hoc signed app and verifies the executable, bundle type, minimum version, accessory configuration, signature, sandbox, and hardened runtime. The check does not verify that the menu appears or that Quit works, nor does it test a Developer ID signature or execution on macOS 13. Those require interactive testing and appropriate signing credentials.
 
-Run `bash Tests/verify-finder-configuration.sh`, `bash Tests/verify-finder-requests.sh` to check shared configuration, untrusted request parsing, containment and descriptor-anchored creation. The URL scheme is not sender-authenticated: the host validates user-granted scope and preferences, and requires confirmation before each operation. Do not treat these tests as proof of live App Group or Finder behavior.
+Run `bash Tests/verify-finder-configuration.sh`, `bash Tests/verify-finder-requests.sh` to check shared configuration, untrusted request parsing, containment, descriptor-anchored creation, and the immediate Terminal handoff. The URL scheme is not sender-authenticated: another local app can request that Terminal open in an accessible local directory while the action is enabled. File and folder creation still require entering a name. Do not treat these tests as proof of live App Group or Finder behavior.
 
 The Finder request checks also exercise the direct-build action pipeline, including physical paths behind macOS symbolic links. The ad-hoc signed Direct preview was tested through Finder with selected items and folder backgrounds. See [Finder verification](docs/VERIFICATION.md#finder-actions) for the tested contexts and preview registration notes.
 

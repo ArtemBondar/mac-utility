@@ -44,6 +44,4 @@
 "Terminal could not be opened." = "Не вдалося відкрити Термінал.";
 "Finder action is unavailable. Check the selected folder and its access in Settings." = "Дія Finder недоступна. Перевірте вибрану папку та доступ до неї в параметрах.";
 "Finder action is unavailable. Check the selected location and macOS access permissions." = "Дія Finder недоступна. Перевірте вибране розташування та дозволи доступу macOS.";
-"Open Terminal in %@?" = "Відкрити Термінал у папці %@?";
-"Open Terminal" = "Відкрити Термінал";
 "Show Dock icon" = "Показувати значок у Dock";

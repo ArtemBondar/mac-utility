@@ -26,6 +26,8 @@ for key in en:
         assert re.findall(r'%(?:\d+\$)?[@dfis]', table[key]) == re.findall(r'%(?:\d+\$)?[@dfis]', key), f'placeholder mismatch: {key}'
 source = '\n'.join(p.read_text() for p in (root / 'Sources/MacUtility').glob('*.swift'))
 used = set(re.findall(r'L10n\.(?:text|format)\("([^"\n]+)"', source))
+extension = '\n'.join(p.read_text() for p in (root / 'Sources/FinderExtension').glob('*.swift'))
+used.update(re.findall(r'localizedString\(forKey: "([^"\n]+)"', extension))
 assert used == en.keys(), f'missing or unused keys: {used ^ en.keys()}'
 assert not re.search(r'\b(?:Text|Button|Toggle|Section|Window|MenuBarExtra)\("(?![^"\n]*\\)', source), 'Use L10n for user-facing SwiftUI literals'
 print('PASS: English/Ukrainian coverage, placeholders and SwiftUI literals')

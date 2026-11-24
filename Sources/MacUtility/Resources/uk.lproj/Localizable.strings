@@ -24,6 +24,7 @@
 "New File" = "Новий файл";
 "New Folder" = "Нова папка";
 "Open Terminal Here" = "Відкрити Термінал тут";
+"Copy Folder Path" = "Копіювати шлях до папки";
 "General" = "Загальні";
 "Open at Login" = "Відкривати під час входу";
 "macOS may require approval in Login Items settings." = "macOS може вимагати дозволу в параметрах об’єктів входу.";

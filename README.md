@@ -1,6 +1,6 @@
 # Mac Utility
 
-A lightweight macOS menu bar utility in early development. The intended Finder actions are New File, New Folder, and Open Terminal Here.
+A lightweight macOS menu bar utility in early development. Finder actions include New File, New Folder, Open Terminal Here, and Copy Folder Path.
 
 ## Current state
 
@@ -11,6 +11,8 @@ An initial Finder Sync extension and host action handoff are included. This inte
 The experimental `Direct` Xcode configuration is intended for testing broad local Finder coverage without selecting folders individually. Its host runs **without App Sandbox**, while its Finder extension remains sandboxed; it is not suitable for Mac App Store distribution. Normal macOS privacy controls and filesystem permissions still apply. The extension monitors `/` and sends requests to a dedicated URL scheme; the host validates the destination and enabled actions. File and folder creation prompt for a name; Terminal opens without a confirmation. The `Debug` and `Release` sandboxed configurations are unchanged.
 
 On first launch, if the Finder extension is disabled, the app offers to open macOS extension settings. Enable Mac Utility there; the app cannot enable the extension on your behalf. The menu bar and Settings show its status, and Settings can reopen extension management. macOS may separately request access to protected locations.
+
+Copy Folder Path puts the current or selected folder's absolute path on the clipboard without a prompt. When a file is selected, it copies that file's containing folder. This action runs in the Finder extension, not through the app's public URL scheme. Live Finder and protected-folder clipboard behavior remain unverified.
 
 Run `bash Tests/verify-dock-window.sh` in a graphical macOS session to check that an AppKit settings window remains visible through Dock activation-policy changes. This exercises the window lifecycle, not the packaged app's toggle.
 

@@ -79,7 +79,25 @@ final class FinderSync: FIFinderSync {
         add("New File", .newFile, config.newFile)
         add("New Folder", .newFolder, config.newFolder)
         add("Open Terminal Here", .openTerminal, config.openTerminal)
+        let pathTitle = Bundle(for: FinderSync.self).localizedString(forKey: "Copy Folder Path", value: "Copy Folder Path", table: nil)
+        let pathAction: Selector = context == .item ? #selector(copyPathForItem(_:)) : #selector(copyPathInContainer(_:))
+        let pathItem = NSMenuItem(title: pathTitle, action: pathAction, keyEquivalent: "")
+        pathItem.target = self
+        menu.addItem(pathItem)
         return menu.items.isEmpty ? nil : menu
+    }
+
+    @objc private func copyPathForItem(_ sender: Any?) { copyFolderPath(in: .item) }
+    @objc private func copyPathInContainer(_ sender: Any?) { copyFolderPath(in: .container) }
+
+    private func copyFolderPath(in context: FinderMenuAction.Context) {
+        let controller = FIFinderSyncController.default()
+        let copied = FinderMenuAction.copyFolderPath(context: context, target: controller.targetedURL(),
+                                                      selection: controller.selectedItemURLs() ?? []) { path in
+            NSPasteboard.general.clearContents()
+            return NSPasteboard.general.setString(path, forType: .string)
+        }
+        if !copied { logger.error("Could not copy the Finder folder path") }
     }
 
     @objc private func newFileForItem(_ sender: Any?) { perform(.newFile, in: .item) }

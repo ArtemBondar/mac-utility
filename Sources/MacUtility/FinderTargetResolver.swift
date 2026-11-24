@@ -1,8 +1,19 @@
 import Foundation
+import Darwin
 
 /// Resolves the directory for a Finder action. The caller must obtain and maintain
 /// security-scoped access and revalidate the destination when performing an operation.
 enum FinderTargetResolver {
+    /// Resolve every path component to the physical path used by openat. On
+    /// macOS Foundation may preserve aliases such as /var, which is a symlink.
+    static func canonicalFileURL(_ url: URL) -> URL? {
+        guard url.isFileURL, let resolved = realpath(url.path, nil) else { return nil }
+        defer { free(resolved) }
+        let path = String(cString: resolved)
+        var isDirectory: ObjCBool = false
+        guard FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory) else { return nil }
+        return URL(fileURLWithPath: path, isDirectory: isDirectory.boolValue)
+    }
     enum Context {
         case item
         case container
@@ -21,7 +32,7 @@ enum FinderTargetResolver {
             candidate = selection[0]
         }
         guard candidate.isFileURL else { return nil }
-        let resolved = candidate.standardizedFileURL.resolvingSymlinksInPath()
+        guard let resolved = canonicalFileURL(candidate) else { return nil }
         guard let values = try? resolved.resourceValues(forKeys: [.isDirectoryKey, .isRegularFileKey, .volumeIsLocalKey]),
               values.volumeIsLocal == true else { return nil }
         let destination: URL

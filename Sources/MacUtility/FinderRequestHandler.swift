@@ -22,7 +22,10 @@ enum FinderRequestHandler {
                                       options: [.withSecurityScope, .withoutUI],
                                       relativeTo: nil, bookmarkDataIsStale: &stale), !stale,
                   root.startAccessingSecurityScopedResource() else { continue }
-            let canonicalRoot = root.standardizedFileURL.resolvingSymlinksInPath()
+            guard let canonicalRoot = FinderTargetResolver.canonicalFileURL(root) else {
+                root.stopAccessingSecurityScopedResource()
+                continue
+            }
             let context: FinderTargetResolver.Context = request.context == .item ? .item : .container
             guard let destination = FinderTargetResolver.resolve(context: context, target: request.target, selection: request.selection),
                   let directory = SecureDirectory.open(root: canonicalRoot, destination: destination) else {

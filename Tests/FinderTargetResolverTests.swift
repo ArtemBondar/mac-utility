@@ -11,8 +11,8 @@ struct FinderTargetResolverTests {
         try fm.createDirectory(at: folder, withIntermediateDirectories: false)
         let file = root.appendingPathComponent("a file.txt")
         try Data().write(to: file)
-        let normalizedRoot = root.standardizedFileURL.resolvingSymlinksInPath()
-        let normalizedFolder = folder.standardizedFileURL.resolvingSymlinksInPath()
+        let normalizedRoot = FinderTargetResolver.canonicalFileURL(root)!
+        let normalizedFolder = FinderTargetResolver.canonicalFileURL(folder)!
         func expect(_ actual: URL?, _ expected: URL?, _ name: String) {
             precondition(actual == expected, "\(name): got \(String(describing: actual)), expected \(String(describing: expected))")
         }

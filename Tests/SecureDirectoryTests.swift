@@ -15,6 +15,8 @@ struct SecureDirectoryTests {
         let canonicalChild = child.resolvingSymlinksInPath()
         guard let fd = SecureDirectory.open(root: canonicalRoot, destination: canonicalChild) else { fatalError("directory should open") }
         precondition(SecureDirectory.open(root: canonicalRoot, destination: outside.resolvingSymlinksInPath()) == nil)
+        let traversal = URL(fileURLWithPath: canonicalRoot.path + "/../root-other", isDirectory: true)
+        precondition(SecureDirectory.open(root: canonicalRoot, destination: traversal) == nil, "path traversal must not escape the granted root")
         let moved = root.appendingPathComponent("moved")
         try fm.moveItem(at: child, to: moved)
         try fm.createSymbolicLink(at: child, withDestinationURL: outside)

@@ -31,15 +31,6 @@ struct MacUtilityApp: App {
 final class AppDelegate: NSObject, NSApplicationDelegate {
     static let sharedStore = SettingsStore(sharedDefaults: UserDefaults(suiteName: FinderConfiguration.groupIdentifier))
     private static let settingsWindow = SettingsWindowOwner<NSWindowController>()
-    private let urlReceiver = FinderURLReceiver { url in
-        Task { @MainActor in
-            FinderRequestHandler.handle(url, store: AppDelegate.sharedStore)
-        }
-    }
-
-    func applicationWillFinishLaunching(_ notification: Notification) {
-        urlReceiver.install()
-    }
 
     static func showSettings() {
         let controller = settingsWindow.getOrCreate {
@@ -59,8 +50,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        // SwiftUI may install its own URL handler during launch.
-        urlReceiver.install()
         NSApp.setActivationPolicy(Self.sharedStore.showDockIcon ? .regular : .accessory)
         DispatchQueue.main.async {
             let defaults = UserDefaults.standard
@@ -81,6 +70,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    func application(_ application: NSApplication, open urls: [URL]) {
+        for url in urls where url.scheme == FinderActionRequest.scheme {
+            FinderRequestHandler.handle(url, store: Self.sharedStore)
+        }
+    }
 }
 
 struct SettingsView: View {

@@ -26,7 +26,7 @@ Run `bash Tests/verify-app-bundle.sh` on a Mac with Xcode installed. It builds a
 
 Run `bash Tests/verify-finder-configuration.sh`, `bash Tests/verify-finder-requests.sh` to check shared configuration, untrusted request parsing, containment and descriptor-anchored creation. The URL scheme is not sender-authenticated: the host validates user-granted scope and preferences, and requires confirmation before each operation. Do not treat these tests as proof of live App Group or Finder behavior.
 
-The Finder request checks also exercise URL event decoding and the direct-build action pipeline, including physical paths behind macOS symbolic links. A separately signed diagnostic copy received URL events both at launch and while running; actual Finder menu actions still need interactive verification in the packaged app.
+The Finder request checks also exercise the direct-build action pipeline, including physical paths behind macOS symbolic links. A separately signed diagnostic copy received URL events both at launch and while running; actual Finder menu actions still need interactive verification in the packaged app.
 
 Run `bash Tests/verify-settings.sh` for isolated settings persistence, folder removal and invalid-bookmark handling. This does not replace interactive permission, login-item, and Finder extension testing.
 

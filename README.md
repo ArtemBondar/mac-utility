@@ -1,5 +1,7 @@
 # Mac Utility
 
+[Website](https://artembondar.github.io/mac-utility/) · [Download](https://github.com/ArtemBondar/mac-utility/releases/latest)
+
 ## What
 
 Mac Utility is a lightweight Swift app that lives in the macOS menu bar and adds everyday file actions to Finder.
@@ -81,6 +83,14 @@ Run the automated checks on a Mac with Xcode installed:
 
 ```sh
 bash scripts/ci-checks.sh
+```
+
+The GitHub Pages website lives in `site/`. To run its desktop and mobile browser tests:
+
+```sh
+npm ci
+npx playwright install chromium
+npm run test:site
 ```
 
 Further details:

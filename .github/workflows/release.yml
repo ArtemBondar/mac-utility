@@ -1,21 +1,20 @@
 name: Publish release
 on:
   push:
+    branches: [main]
     tags: ['v*']
   workflow_dispatch:
     inputs:
       version:
         description: Release version
         required: true
-        default: '1.0.0'
+        default: '1.0.1'
 permissions:
   contents: read
 jobs:
   release:
     runs-on: macos-latest
     timeout-minutes: 30
-    env:
-      RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && format('v{0}', inputs.version) || github.ref_name }}
     permissions:
       contents: write
     steps:
@@ -23,11 +22,24 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
+      - name: Resolve release version
+        env:
+          REQUESTED_VERSION: ${{ inputs.version }}
+        run: |
+          if [[ "$GITHUB_EVENT_NAME" == workflow_dispatch ]]; then
+            tag="v$REQUESTED_VERSION"
+          elif [[ "$GITHUB_REF_TYPE" == tag ]]; then
+            tag="$GITHUB_REF_NAME"
+          else
+            tag="v$(python3 scripts/verify_release_version.py --current)"
+          fi
+          [[ "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo 'Expected a version such as 1.0.1'; exit 1; }
+          echo "RELEASE_TAG=$tag" >> "$GITHUB_ENV"
       - name: Verify tag name
         run: |
           [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo 'Expected a version tag, e.g. v1.2.3'; exit 1; }
-          if [[ "$GITHUB_EVENT_NAME" == workflow_dispatch && "$GITHUB_REF" != refs/heads/main ]]; then
-            echo 'Manual releases must run from main'; exit 1
+          if [[ "$GITHUB_REF_TYPE" != tag && "$GITHUB_REF" != refs/heads/main ]]; then
+            echo 'Manual and automatic releases must run from main'; exit 1
           fi
           git merge-base --is-ancestor "$GITHUB_SHA" refs/remotes/origin/main || \
             { echo 'Tag must point to a commit reachable from main'; exit 1; }
@@ -55,7 +67,7 @@ jobs:
             gh release upload "$RELEASE_TAG" "$artifact"
             gh release edit "$RELEASE_TAG" --draft=false --title "${RELEASE_TAG#v}" --notes-file "$notes"
           else
-            if [[ "$GITHUB_EVENT_NAME" == workflow_dispatch ]]; then
+            if [[ "$GITHUB_REF_TYPE" != tag ]]; then
               gh release create "$RELEASE_TAG" "$artifact" --target "$GITHUB_SHA" \
                 --title "${RELEASE_TAG#v}" --notes-file "$notes"
             else

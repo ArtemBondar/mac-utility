@@ -12,6 +12,9 @@ struct LocalizationTests {
         }
         let english = bundle("en")
         let ukrainian = bundle("uk")
+        for language in [english, ukrainian] {
+            precondition(language.localizedString(forKey: "Clicklet", value: nil, table: nil) == "Clicklet")
+        }
         let key = "New Folder"
         precondition(english.localizedString(forKey: key, value: nil, table: nil) == "New Folder")
         precondition(ukrainian.localizedString(forKey: key, value: nil, table: nil) == "Нова папка")

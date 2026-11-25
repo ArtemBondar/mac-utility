@@ -42,7 +42,7 @@ def validate_app(path):
         with (bundle / 'Contents/Info.plist').open('rb') as stream:
             info = plistlib.load(stream)
         if info.get('CFBundleIdentifier') != identifier:
-            raise ValueError('Expected a Mac Utility Direct preview: ' + str(bundle))
+            raise ValueError('Expected a Clicklet Direct build: ' + str(bundle))
     return app, extension
 
 
@@ -79,5 +79,5 @@ def activate(path):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('app', help='Path to the Direct MacUtility.app to use')
+    parser.add_argument('app', help='Path to the Direct Clicklet.app to use')
     activate(parser.parse_args().app)

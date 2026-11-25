@@ -42,12 +42,12 @@ jobs:
       - name: Build direct-download app
         run: |
           bash scripts/build-direct-preview.sh "$RUNNER_TEMP/macutility-release"
-          mv "$RUNNER_TEMP/macutility-release/MacUtility-direct-preview.zip" "$RUNNER_TEMP/MacUtility-${RELEASE_TAG#v}.zip"
+          mv "$RUNNER_TEMP/macutility-release/Clicklet-direct-preview.zip" "$RUNNER_TEMP/Clicklet-${RELEASE_TAG#v}.zip"
       - name: Publish GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          artifact="$RUNNER_TEMP/MacUtility-${RELEASE_TAG#v}.zip"
+          artifact="$RUNNER_TEMP/Clicklet-${RELEASE_TAG#v}.zip"
           notes="docs/releases/$RELEASE_TAG.md"
           # The release may already exist when its tag was created in GitHub's UI.
           # Existing assets are never silently replaced.

@@ -48,7 +48,7 @@ class PipelineTests(unittest.TestCase):
                 'xcodebuild': '''#!/bin/bash
 set -eu
 while [[ "$1" != "-derivedDataPath" ]]; do shift; done
-mkdir -p "$2/Build/Products/Release/MacUtility.app/Contents/PlugIns/FinderExtension.appex"
+mkdir -p "$2/Build/Products/Release/Clicklet.app/Contents/PlugIns/FinderExtension.appex"
 ''',
                 'codesign': '#!/bin/bash\nprintf "%s\\n" "$*" >> "$TRACE"\n',
                 'ditto': '#!/bin/bash\nprintf preview > "${@: -1}"\n',
@@ -61,14 +61,14 @@ mkdir -p "$2/Build/Products/Release/MacUtility.app/Contents/PlugIns/FinderExtens
             out = tmp / 'result'
             command = ['bash', str(ROOT / 'scripts/build-preview.sh'), str(out)]
             subprocess.run(command, env=env, check=True, capture_output=True, text=True)
-            self.assertEqual((out / 'MacUtility-preview.zip').read_text(), 'preview')
+            self.assertEqual((out / 'Clicklet-preview.zip').read_text(), 'preview')
             log = trace.read_text()
             self.assertIn('FinderExtension.entitlements', log)
             self.assertIn('MacUtility.entitlements', log)
             self.assertIn('--verify --strict --deep', log)
             second = subprocess.run(command, env=env, capture_output=True, text=True)
             self.assertEqual(second.returncode, 2)
-            self.assertEqual((out / 'MacUtility-preview.zip').read_text(), 'preview')
+            self.assertEqual((out / 'Clicklet-preview.zip').read_text(), 'preview')
 
 
 if __name__ == '__main__':

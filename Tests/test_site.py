@@ -37,6 +37,18 @@ class SiteTests(unittest.TestCase):
             self.assertIn(key, used)
         self.assertEqual({'en', 'uk'}, {attrs['data-lang'] for _, attrs in self.page.elements if 'data-lang' in attrs})
 
+    def test_clicklet_brand_and_release_are_consistent(self):
+        source = (SITE / 'index.html').read_text()
+        self.assertIn('alt="">Clicklet</a>', source)
+        for strings in [self.en, self.uk]:
+            self.assertTrue(strings['page.title'].startswith('Clicklet'))
+            self.assertNotIn('Mac Utility', '\n'.join(strings.values()))
+            self.assertIn('Clicklet.app', strings['how.download.body'])
+        project = (ROOT / 'MacUtility.xcodeproj/project.pbxproj').read_text()
+        versions = re.findall(r'MARKETING_VERSION\s*=\s*([^;]+);', project)
+        self.assertEqual(versions, ['1.0.1'] * 6)
+        self.assertIn('releases/download/v1.0.1/Clicklet-1.0.1.zip', source)
+
     def test_assets_navigation_and_release_download(self):
         ids = [attrs['id'] for _, attrs in self.page.elements if 'id' in attrs]
         self.assertEqual(len(ids), len(set(ids)))
@@ -53,7 +65,7 @@ class SiteTests(unittest.TestCase):
                 self.assertIn('alt', attrs)
         downloads = [attrs['href'] for _, attrs in self.page.elements if attrs.get('data-i18n') == 'download']
         self.assertEqual(len(downloads), 2)
-        self.assertEqual(set(downloads), {'https://github.com/ArtemBondar/mac-utility/releases/download/v1.0.0/MacUtility-1.0.0.zip'})
+        self.assertEqual(set(downloads), {'https://github.com/ArtemBondar/mac-utility/releases/download/v1.0.1/Clicklet-1.0.1.zip'})
         self.assertIn('not notarized', self.en['signing'])
         self.assertIn('Apple silicon', self.en['hero.note'])
 

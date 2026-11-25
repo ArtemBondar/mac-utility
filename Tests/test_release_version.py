@@ -22,6 +22,19 @@ class ReleaseVersionTests(unittest.TestCase):
             self.prepare(root)
             module.verify('v1.0.0', root)
 
+    def test_current_version_is_shared_across_all_targets(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.prepare(root)
+            self.assertEqual(module.project_version(root), '1.0.0')
+
+    def test_current_version_rejects_mismatched_targets(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.prepare(root, ['1.0.0'] * 5 + ['1.0.1'])
+            with self.assertRaisesRegex(ValueError, 'all app and extension'):
+                module.project_version(root)
+
     def test_mismatched_extension_version_is_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

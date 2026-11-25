@@ -12,10 +12,10 @@ build="$(mktemp -d "${TMPDIR:-/tmp}/macutility-release.XXXXXX")"
 trap 'rm -rf "$build"' EXIT
 xcodebuild -quiet -project "$root/MacUtility.xcodeproj" -scheme MacUtility -configuration Release \
   -derivedDataPath "$build" CODE_SIGNING_ALLOWED=NO build
-app="$build/Build/Products/Release/MacUtility.app"
+app="$build/Build/Products/Release/Clicklet.app"
 extension="$app/Contents/PlugIns/FinderExtension.appex"
 codesign --force --sign - --options runtime --entitlements "$root/FinderExtension.entitlements" "$extension"
 codesign --force --sign - --options runtime --entitlements "$root/MacUtility.entitlements" "$app"
 codesign --verify --strict --deep "$app"
-ditto -c -k --sequesterRsrc --keepParent "$app" "$output/MacUtility-preview.zip"
-echo "Created $output/MacUtility-preview.zip (ad-hoc signed, not notarized)."
+ditto -c -k --sequesterRsrc --keepParent "$app" "$output/Clicklet-preview.zip"
+echo "Created $output/Clicklet-preview.zip (ad-hoc signed, not notarized)."

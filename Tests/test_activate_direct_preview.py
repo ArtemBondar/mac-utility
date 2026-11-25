@@ -33,3 +33,13 @@ class DirectPreviewActivationTests(unittest.TestCase):
                 plistlib.dump({'CFBundleIdentifier': 'com.example.MacUtility'}, stream)
             with self.assertRaises(ValueError):
                 module.validate_app(app)
+
+    def test_renamed_bundle_preserves_existing_direct_identity(self):
+        with tempfile.TemporaryDirectory() as root:
+            app = Path(root) / 'Clicklet.app'
+            extension = app / 'Contents/PlugIns/FinderExtension.appex'
+            for bundle, identifier in [(app, module.HOST_ID), (extension, module.EXTENSION_ID)]:
+                (bundle / 'Contents').mkdir(parents=True)
+                with (bundle / 'Contents/Info.plist').open('wb') as stream:
+                    plistlib.dump({'CFBundleIdentifier': identifier, 'CFBundleDisplayName': 'Clicklet'}, stream)
+            self.assertEqual(module.validate_app(app), (app.resolve(), extension.resolve()))

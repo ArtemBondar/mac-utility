@@ -17,7 +17,13 @@ class PipelineTests(unittest.TestCase):
         self.assertIn('branches: [develop]', ci)
         self.assertIn("tags: ['v*']", release)
         self.assertIn('workflow_dispatch:', release)
-        self.assertIn('Manual releases must run from main', release)
+        self.assertIn('Manual and automatic releases must run from main', release)
+        self.assertIn('branches: [main]', release)
+        self.assertNotIn('branches: [develop]', release)
+        self.assertIn('verify_release_version.py --current', release)
+        self.assertIn('"$GITHUB_REF_TYPE" != tag && "$GITHUB_REF" != refs/heads/main', release)
+        self.assertIn('"RELEASE_TAG=$tag" >> "$GITHUB_ENV"', release)
+        self.assertLess(release.index('[[ "$tag" =~'), release.index('"RELEASE_TAG=$tag" >> "$GITHUB_ENV"'))
         self.assertIn('--verify-tag', release)
         self.assertNotIn('--verify-tag --draft', release)
         self.assertIn('build-direct-preview.sh', release)
@@ -48,7 +54,7 @@ class PipelineTests(unittest.TestCase):
                 'xcodebuild': '''#!/bin/bash
 set -eu
 while [[ "$1" != "-derivedDataPath" ]]; do shift; done
-mkdir -p "$2/Build/Products/Release/MacUtility.app/Contents/PlugIns/FinderExtension.appex"
+mkdir -p "$2/Build/Products/Release/Clicklet.app/Contents/PlugIns/FinderExtension.appex"
 ''',
                 'codesign': '#!/bin/bash\nprintf "%s\\n" "$*" >> "$TRACE"\n',
                 'ditto': '#!/bin/bash\nprintf preview > "${@: -1}"\n',
@@ -61,14 +67,14 @@ mkdir -p "$2/Build/Products/Release/MacUtility.app/Contents/PlugIns/FinderExtens
             out = tmp / 'result'
             command = ['bash', str(ROOT / 'scripts/build-preview.sh'), str(out)]
             subprocess.run(command, env=env, check=True, capture_output=True, text=True)
-            self.assertEqual((out / 'MacUtility-preview.zip').read_text(), 'preview')
+            self.assertEqual((out / 'Clicklet-preview.zip').read_text(), 'preview')
             log = trace.read_text()
             self.assertIn('FinderExtension.entitlements', log)
             self.assertIn('MacUtility.entitlements', log)
             self.assertIn('--verify --strict --deep', log)
             second = subprocess.run(command, env=env, capture_output=True, text=True)
             self.assertEqual(second.returncode, 2)
-            self.assertEqual((out / 'MacUtility-preview.zip').read_text(), 'preview')
+            self.assertEqual((out / 'Clicklet-preview.zip').read_text(), 'preview')
 
 
 if __name__ == '__main__':

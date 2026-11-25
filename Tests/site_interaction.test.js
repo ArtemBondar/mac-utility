@@ -1,0 +1,46 @@
+'use strict';
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const site = require('../site/app.js');
+const en = JSON.parse(fs.readFileSync(path.join(__dirname, '../site/locales/en.json')));
+const uk = JSON.parse(fs.readFileSync(path.join(__dirname, '../site/locales/uk.json')));
+assert.equal(site.chooseLanguage(null, 'uk-UA'), 'uk');
+assert.equal(site.chooseLanguage('en', 'uk-UA'), 'en');
+assert.equal(site.chooseLanguage('fr', 'fr-FR'), 'en');
+assert.equal(site.chooseLanguage(null, 'en-UK'), 'en');
+assert.equal(site.nextTheme(undefined), 'dark');
+assert.equal(site.nextTheme('dark'), 'light');
+assert.equal(site.nextTheme('light'), null);
+const storage = new Map();
+const adapter = {getItem: key => storage.get(key), setItem: (key, value) => storage.set(key, value), removeItem: key => storage.delete(key)};
+site.save(adapter, 'theme', 'dark');
+assert.equal(site.read(adapter, 'theme'), 'dark');
+site.save(adapter, 'theme', null);
+assert.equal(storage.has('theme'), false);
+const inaccessible = {getItem: () => {throw new Error();}, setItem: () => {throw new Error();}, removeItem: () => {throw new Error();}};
+assert.doesNotThrow(() => site.save(inaccessible, 'theme', 'dark'));
+assert.equal(site.read(inaccessible, 'theme'), null);
+function element(attributes) {
+  return {attributes, textContent: '', getAttribute(key) {return this.attributes[key];}, setAttribute(key, value) {this.attributes[key] = value;}};
+}
+const label = element({'data-i18n': 'action.path'});
+const aria = element({'data-i18n-aria': 'nav.label'});
+const english = element({'data-lang': 'en'});
+const ukrainian = element({'data-lang': 'uk'});
+const meta = element({});
+const doc = {documentElement: {}, querySelectorAll(selector) {
+  return {'[data-i18n]': [label], '[data-i18n-aria]': [aria], '[data-lang]': [english, ukrainian]}[selector];
+}, querySelector() {return meta;}};
+site.applyTranslations(doc, 'uk', uk);
+assert.equal(label.textContent, uk['action.path']);
+assert.equal(aria.attributes['aria-label'], uk['nav.label']);
+assert.equal(doc.documentElement.lang, 'uk');
+assert.equal(doc.title, uk['page.title']);
+assert.equal(meta.attributes.content, uk['page.description']);
+assert.equal(english.attributes['aria-pressed'], 'false');
+assert.equal(ukrainian.attributes['aria-pressed'], 'true');
+site.applyTranslations(doc, 'en', en);
+assert.equal(label.textContent, en['action.path']);
+assert.equal(doc.documentElement.lang, 'en');
+console.log('PASS: website language selection, translation application, theme cycling and storage failure handling');

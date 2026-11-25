@@ -20,6 +20,23 @@ for (const language of ['en', 'uk']) {
       await expect(download).toBeVisible();
     }
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    // Section labels should sit above their content, rather than reserving an
+    // empty desktop rail. Verify the real geometry in both languages/viewports.
+    for (const id of ['what', 'why', 'how']) {
+      const label = await page.locator(`#${id} .eyebrow`).boundingBox();
+      const heading = await page.locator(`#${id} h2`).boundingBox();
+      expect(Math.abs(label.x - heading.x)).toBeLessThan(2);
+      expect(heading.y - label.y - label.height).toBeLessThanOrEqual(16);
+      expect(heading.y).toBeGreaterThanOrEqual(label.y + label.height);
+    }
+    const steps = await page.locator('.steps li').all();
+    const firstStep = await steps[0].boundingBox();
+    const secondStep = await steps[1].boundingBox();
+    if (page.viewportSize().width > 740) {
+      expect(Math.abs(firstStep.y - secondStep.y)).toBeLessThan(2);
+    } else {
+      expect(secondStep.y).toBeGreaterThan(firstStep.y + firstStep.height);
+    }
     expect(errors).toEqual([]);
     await page.reload();
     await expect(page.locator('html')).toHaveAttribute('lang', language);

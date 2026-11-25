@@ -80,6 +80,21 @@ class SiteTests(unittest.TestCase):
     def test_language_and_theme_interactions(self):
         subprocess.run(['node', str(ROOT / 'Tests/site_interaction.test.js')], cwd=ROOT, check=True, capture_output=True, text=True)
 
+    def test_pages_upload_finishes_before_separate_deployment(self):
+        workflow = (ROOT / '.github/workflows/pages.yml').read_text()
+        upload = workflow.split('  upload:\n', 1)[1].split('  deploy:\n', 1)[0]
+        deploy = workflow.split('  deploy:\n', 1)[1]
+        gate = "github.event_name != 'pull_request' && github.ref == 'refs/heads/develop'"
+        self.assertIn(gate, upload)
+        self.assertIn(gate, deploy)
+        self.assertIn('needs: check', upload)
+        self.assertIn('needs: upload', deploy)
+        self.assertIn('actions/upload-pages-artifact@', upload)
+        self.assertNotIn('actions/upload-pages-artifact@', deploy)
+        self.assertNotIn('pages: write', upload)
+        self.assertIn('name: github-pages', upload)
+        self.assertIn('artifact_name: github-pages', deploy)
+
 
 if __name__ == '__main__':
     unittest.main()

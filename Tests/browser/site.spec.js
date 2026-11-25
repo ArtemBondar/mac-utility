@@ -7,6 +7,8 @@ for (const language of ['en', 'uk']) {
     await page.goto('/');
     await page.locator(`[data-lang="${language}"]`).click();
     await expect(page.locator('html')).toHaveAttribute('lang', language);
+    await expect(page).toHaveTitle(/Clicklet/);
+    await expect(page.locator('.brand')).toHaveText('Clicklet');
     await expect(page.locator(`[data-lang="${language}"]`)).toHaveAttribute('aria-pressed', 'true');
     await expect(page.locator('h1')).toContainText(language === 'en' ? 'Small actions.' : 'Маленькі дії.');
     await expect(page.locator('h1 .hero-period')).toHaveCount(1);

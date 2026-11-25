@@ -63,6 +63,11 @@ class SiteTests(unittest.TestCase):
         self.assertTrue(all(source and not urlparse(source).scheme for source in scripts))
         self.assertTrue((SITE / '.nojekyll').exists())
 
+    def test_project_uses_its_own_custom_domain(self):
+        domain = (SITE / 'CNAME').read_text().strip()
+        self.assertEqual(domain, 'clicklet.artembondar.dev')
+        self.assertIn('https://' + domain + '/', (ROOT / 'README.md').read_text())
+
     def test_pages_deployment_uses_scoped_permissions_and_pinned_actions(self):
         workflow = (ROOT / '.github/workflows/pages.yml').read_text()
         self.assertIn('branches: [develop]', workflow)

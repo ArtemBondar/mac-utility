@@ -1,10 +1,10 @@
-# Mac Utility
+# Clicklet
 
-[Website](https://artembondar.github.io/mac-utility/) · [Download](https://github.com/ArtemBondar/mac-utility/releases/latest)
+[Website](https://clicklet.artembondar.dev/) · [Download](https://github.com/ArtemBondar/mac-utility/releases/latest)
 
 ## What
 
-Mac Utility is a lightweight Swift app that lives in the macOS menu bar and adds everyday file actions to Finder.
+Clicklet is a lightweight Swift app that lives in the macOS menu bar and adds everyday file actions to Finder.
 
 | Finder action | What it does |
 | --- | --- |
@@ -17,7 +17,7 @@ The app includes English and Ukrainian, an optional Dock icon, and launch at log
 
 ## Why
 
-Create a file, start a terminal session, or copy a folder path where you are already working. Mac Utility keeps these actions in Finder's right-click menu, with settings available from the menu bar.
+Create a file, start a terminal session, or copy a folder path where you are already working. Clicklet keeps these actions in Finder's right-click menu, with settings available from the menu bar.
 
 The direct-download app works with local folders your account can access, without asking you to add each folder individually. Normal macOS privacy controls and filesystem permissions still apply.
 
@@ -28,16 +28,16 @@ The direct-download app works with local folders your account can access, withou
 The current download is for **Apple silicon Macs** and is tested on current macOS. Older macOS versions and Intel builds have not been verified.
 
 1. Download [MacUtility-1.0.0.zip](https://github.com/ArtemBondar/mac-utility/releases/download/v1.0.0/MacUtility-1.0.0.zip), or visit [Releases](https://github.com/ArtemBondar/mac-utility/releases) for newer versions.
-2. Quit any older copy of Mac Utility, then unzip the download.
-3. Move **MacUtility.app** to **Applications**. Keep one installed copy and open it from there.
+2. Quit any older copy of Clicklet, then unzip the download.
+3. Move the app to **Applications**. The published 1.0.0 download is still named **MacUtility.app**; newly built Clicklet bundles are named **Clicklet.app**. Keep one installed copy and open it from there.
 4. If macOS blocks the first launch, note that this release is **ad-hoc signed and not notarized**. Review [Apple's guidance for opening downloaded apps](https://support.apple.com/en-us/102445) before deciding whether to allow it.
-5. On first launch, choose **Open Finder Extension Settings** and enable Mac Utility. You can also reach this button through the app's menu bar icon → **Settings…**.
+5. On first launch, choose **Open Finder Extension Settings** and enable Clicklet. You can also reach this button through the app's menu bar icon → **Settings…**.
 
 The app's menu bar menu and Settings show whether the Finder extension is enabled. The Dock icon is hidden by default.
 
 ### Use
 
-In Finder, right-click an empty area inside a local folder, or right-click a single file or folder, then choose a Mac Utility action.
+In Finder, right-click an empty area inside a local folder, or right-click a single file or folder, then choose a Clicklet action.
 
 - **Folder background:** actions use the current folder.
 - **Selected folder:** actions use that folder.
@@ -55,7 +55,7 @@ Choose the menu bar icon → **Settings…** to:
 - Show or hide the Dock icon.
 - Turn **Open at Login** on or off. macOS may require approval in Login Items settings.
 
-The app follows your system language and falls back to English. To quit, choose **Quit Mac Utility** from its menu bar menu.
+The app follows your system language and falls back to English. To quit, choose **Quit Clicklet** from its menu bar menu.
 
 ### If Finder actions are missing
 
@@ -64,10 +64,10 @@ Confirm that the Finder extension is enabled through **Settings… → Open Find
 Finder can keep a development preview registered from another location. If you have a source checkout, select the intended Direct build with:
 
 ```sh
-python3 scripts/activate_direct_preview.py /Applications/MacUtility.app
+python3 scripts/activate_direct_preview.py /Applications/Clicklet.app
 ```
 
-This verifies the app signature and refreshes only Mac Utility Direct registrations. It preserves app files, preferences, extension enablement, and privacy permissions.
+This verifies the app signature and refreshes only Clicklet Direct registrations. It preserves app files, preferences, extension enablement, and privacy permissions.
 
 ### Build and contribute
 

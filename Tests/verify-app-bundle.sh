@@ -11,7 +11,7 @@ xcodebuild -quiet -project "$project_root/MacUtility.xcodeproj" \
   -scheme MacUtility -configuration Debug -derivedDataPath "$test_dir/build" \
   CODE_SIGNING_ALLOWED=NO build
 
-app="$test_dir/build/Build/Products/Debug/MacUtility.app"
+app="$test_dir/build/Build/Products/Debug/Clicklet.app"
 extension="$app/Contents/PlugIns/FinderExtension.appex"
 # Ad-hoc signing checks bundle structure only. A real App Group requires
 # development signing and provisioning; this does not prove runtime access.
@@ -23,6 +23,11 @@ test -s "$app/Contents/Resources/AppIcon.icns"
 test "$("$plistbuddy" -c 'Print :CFBundleIconFile' "$info")" = AppIcon
 
 test -x "$app/Contents/MacOS/MacUtility"
+test "$("$plistbuddy" -c 'Print :CFBundleDisplayName' "$info")" = Clicklet
+test "$("$plistbuddy" -c 'Print :CFBundleName' "$info")" = Clicklet
+test "$("$plistbuddy" -c 'Print :CFBundleExecutable' "$info")" = MacUtility
+test "$("$plistbuddy" -c 'Print :CFBundleIdentifier' "$info")" = com.example.MacUtility
+test "$("$plistbuddy" -c 'Print :CFBundleDisplayName' "$extension/Contents/Info.plist")" = Clicklet
 test -x "$extension/Contents/MacOS/FinderExtension"
 test "$("$plistbuddy" -c 'Print :NSExtension:NSExtensionPointIdentifier' "$extension/Contents/Info.plist")" = com.apple.FinderSync
 test "$("$plistbuddy" -c 'Print :CFBundleURLTypes:0:CFBundleURLSchemes:0' "$info")" = macutility-finder

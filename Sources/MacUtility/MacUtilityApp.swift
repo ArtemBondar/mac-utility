@@ -10,7 +10,7 @@ struct MacUtilityApp: App {
     @StateObject private var store = AppDelegate.sharedStore
 
     var body: some Scene {
-        MenuBarExtra(L10n.text("Mac Utility"), systemImage: "folder.badge.gearshape") {
+        MenuBarExtra(L10n.text("Clicklet"), systemImage: "folder.badge.gearshape") {
             if FIFinderSyncController.isExtensionEnabled {
                 Text(L10n.text("Finder extension is enabled."))
                     .disabled(true)
@@ -22,8 +22,8 @@ struct MacUtilityApp: App {
             Button(L10n.text("Settings…")) {
                 AppDelegate.showSettings()
             }
-            Button(L10n.text("About Mac Utility")) { NSApp.orderFrontStandardAboutPanel(nil) }
-            Button(L10n.text("Quit Mac Utility")) { NSApp.terminate(nil) }
+            Button(L10n.text("About Clicklet")) { NSApp.orderFrontStandardAboutPanel(nil) }
+            Button(L10n.text("Quit Clicklet")) { NSApp.terminate(nil) }
                 .keyboardShortcut("q")
         }
     }
@@ -39,7 +39,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 520, height: 480),
                                   styleMask: [.titled, .closable, .miniaturizable, .resizable],
                                   backing: .buffered, defer: false)
-            window.title = L10n.text("Mac Utility Settings")
+            window.title = L10n.text("Clicklet Settings")
             window.contentView = NSHostingView(rootView: SettingsView(store: sharedStore))
             window.isReleasedWhenClosed = false
             window.center()
@@ -63,7 +63,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             NSApp.activate(ignoringOtherApps: true)
             let alert = NSAlert()
             alert.messageText = L10n.text("Enable Finder extension")
-            alert.informativeText = L10n.text("Enable Mac Utility in Finder Extensions to show its actions in Finder. You can change this later in Settings.")
+            alert.informativeText = L10n.text("Enable Clicklet in Finder Extensions to show its actions in Finder. You can change this later in Settings.")
             alert.addButton(withTitle: L10n.text("Open Finder Extension Settings"))
             alert.addButton(withTitle: L10n.text("Not Now"))
             if alert.runModal() == .alertFirstButtonReturn {
@@ -74,7 +74,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func application(_ application: NSApplication, open urls: [URL]) {
         for url in urls where url.scheme == FinderActionRequest.scheme {
-            logger.notice("Mac Utility received a Finder action")
+            logger.notice("Clicklet received a Finder action")
             FinderRequestHandler.handle(url, store: Self.sharedStore)
         }
     }
@@ -99,10 +99,10 @@ struct SettingsView: View {
                     FIFinderSyncController.showExtensionManagementInterface()
                 }
                 #if DIRECT_DISTRIBUTION
-                Text(L10n.text("Enable the Mac Utility Finder extension in System Settings. Actions are available in local folders your account can access."))
+                Text(L10n.text("Enable the Clicklet Finder extension in System Settings. Actions are available in local folders your account can access."))
                     .foregroundStyle(.secondary)
                 #else
-                Text(L10n.text("Enable the Mac Utility Finder extension in System Settings and add folders below."))
+                Text(L10n.text("Enable the Clicklet Finder extension in System Settings and add folders below."))
                     .foregroundStyle(.secondary)
                 Text(L10n.text("Choose local folders the app may access. You can remove access at any time."))
                 ForEach(store.settings.folders) { folder in

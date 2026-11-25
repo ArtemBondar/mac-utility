@@ -11,7 +11,17 @@
     doc.documentElement.lang = language;
     doc.querySelectorAll('[data-i18n]').forEach(node => {
       const key = node.getAttribute('data-i18n');
-      if (Object.prototype.hasOwnProperty.call(strings, key)) node.textContent = strings[key];
+      if (Object.prototype.hasOwnProperty.call(strings, key)) {
+        const value = strings[key];
+        node.textContent = value;
+        if (key === 'hero.title' && value.endsWith('.')) {
+          node.textContent = value.slice(0, -1);
+          const period = doc.createElement('span');
+          period.className = 'hero-period';
+          period.textContent = '.';
+          node.append(period);
+        }
+      }
     });
     doc.querySelectorAll('[data-i18n-aria]').forEach(node => {
       const key = node.getAttribute('data-i18n-aria');

@@ -6,6 +6,15 @@ struct SettingsStoreTests {
         let name = "MacUtilityTests.\(UUID().uuidString)"
         guard let defaults = UserDefaults(suiteName: name) else { fatalError("Cannot create isolated defaults") }
         defer { defaults.removePersistentDomain(forName: name) }
+        // Settings written by previous versions must keep all existing choices.
+        let legacy = Data("""
+        {"folders":[],"newFile":false,"newFolder":true,"openTerminal":false}
+        """.utf8)
+        defaults.set(legacy, forKey: "settings.v1")
+        let migrated = SettingsStore(defaults: defaults)
+        precondition(!migrated.settings.newFile && migrated.settings.newFolder && !migrated.settings.openTerminal)
+        precondition(migrated.settings.copyFolderPath)
+        defaults.removeObject(forKey: "settings.v1")
         let store = SettingsStore(defaults: defaults)
         precondition(SettingsStore.shouldOfferFinderSetup(extensionEnabled: false, alreadyOffered: false))
         precondition(!SettingsStore.shouldOfferFinderSetup(extensionEnabled: true, alreadyOffered: false))
@@ -43,10 +52,10 @@ struct SettingsStoreTests {
             pending?()
             precondition(windowIsOpen, "Settings must be reopened after changing Dock visibility")
         }
-        precondition(store.settings.newFile && store.settings.newFolder && store.settings.openTerminal)
-        store.setActions(newFile: false, newFolder: true, openTerminal: false)
+        precondition(store.settings.newFile && store.settings.newFolder && store.settings.openTerminal && store.settings.copyFolderPath)
+        store.setActions(newFile: false, newFolder: true, openTerminal: false, copyFolderPath: false)
         let reloaded = SettingsStore(defaults: defaults)
-        precondition(!reloaded.settings.newFile && reloaded.settings.newFolder && !reloaded.settings.openTerminal)
+        precondition(!reloaded.settings.newFile && reloaded.settings.newFolder && !reloaded.settings.openTerminal && !reloaded.settings.copyFolderPath)
         let folder = SavedFolder(id: UUID(), path: "/tmp/example", bookmark: Data("invalid".utf8))
         var settings = reloaded.settings
         settings.folders = [folder]
@@ -59,8 +68,10 @@ struct SettingsStoreTests {
         let publishing = SettingsStore(defaults: defaults, sharedDefaults: shared)
         precondition(FinderConfiguration.read(from: shared)?.roots == [folder.path])
         precondition(FinderConfiguration.read(from: shared)?.newFile == false)
-        publishing.setActions(newFile: true, newFolder: false, openTerminal: true)
+        precondition(FinderConfiguration.read(from: shared)?.copyFolderPath == false)
+        publishing.setActions(newFile: true, newFolder: false, openTerminal: true, copyFolderPath: true)
         precondition(FinderConfiguration.read(from: shared)?.newFolder == false)
+        precondition(FinderConfiguration.read(from: shared)?.copyFolderPath == true)
         publishing.removeFolder(id: folder.id)
         precondition(FinderConfiguration.read(from: shared)?.roots == [])
         // Configuration shared with the extension contains paths, never bookmark data.

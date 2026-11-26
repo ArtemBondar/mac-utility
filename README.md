@@ -27,7 +27,7 @@ The direct-download app works with local folders your account can access, withou
 
 The current download is for **Apple silicon Macs** and is tested on current macOS. Older macOS versions and Intel builds have not been verified.
 
-1. Download [Clicklet-1.0.1.zip](https://github.com/ArtemBondar/mac-utility/releases/download/v1.0.1/Clicklet-1.0.1.zip), or visit [Releases](https://github.com/ArtemBondar/mac-utility/releases) for newer versions.
+1. Download [Clicklet-1.0.2.zip](https://github.com/ArtemBondar/mac-utility/releases/download/v1.0.2/Clicklet-1.0.2.zip), or visit [Releases](https://github.com/ArtemBondar/mac-utility/releases) for newer versions.
 2. Quit any older copy of Clicklet, then unzip the download.
 3. Move **Clicklet.app** to **Applications**. Keep one installed copy and open it from there.
 4. If macOS blocks the first launch, note that this release is **ad-hoc signed and not notarized**. Review [Apple's guidance for opening downloaded apps](https://support.apple.com/en-us/102445) before deciding whether to allow it.

@@ -1,6 +1,6 @@
 # Release preparation
 
-Version 1.0.1 uses the Direct configuration for local files and folders on current macOS. It includes Finder file/folder creation, Terminal, and path copying. The GitHub artifact is ad-hoc signed and not notarized. Developer ID distribution and clean-account installation remain separate validation work.
+Version 1.0.2 uses the Direct configuration for local files and folders on current macOS. It includes Finder file/folder creation, Terminal, and path copying. The GitHub artifact is ad-hoc signed and not notarized. Developer ID distribution and clean-account installation remain separate validation work.
 
 ## Read-only preflight
 

@@ -12,6 +12,20 @@ struct StoredSettings: Codable, Equatable {
     var newFile = true
     var newFolder = true
     var openTerminal = true
+    var copyFolderPath = true
+
+    init() {}
+
+    private enum CodingKeys: String, CodingKey { case folders, newFile, newFolder, openTerminal, copyFolderPath }
+
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        folders = try values.decode([SavedFolder].self, forKey: .folders)
+        newFile = try values.decode(Bool.self, forKey: .newFile)
+        newFolder = try values.decode(Bool.self, forKey: .newFolder)
+        openTerminal = try values.decode(Bool.self, forKey: .openTerminal)
+        copyFolderPath = try values.decodeIfPresent(Bool.self, forKey: .copyFolderPath) ?? true
+    }
 }
 
 final class SettingsStore: ObservableObject {
@@ -49,10 +63,11 @@ final class SettingsStore: ObservableObject {
         defaults.set(visible, forKey: "showDockIcon")
     }
 
-    func setActions(newFile: Bool, newFolder: Bool, openTerminal: Bool) {
+    func setActions(newFile: Bool, newFolder: Bool, openTerminal: Bool, copyFolderPath: Bool) {
         settings.newFile = newFile
         settings.newFolder = newFolder
         settings.openTerminal = openTerminal
+        settings.copyFolderPath = copyFolderPath
         save()
     }
 
@@ -101,7 +116,7 @@ final class SettingsStore: ObservableObject {
 
     private func publishFinderConfiguration() {
         let config = FinderConfiguration(roots: FinderConfiguration.defaultRoots ?? settings.folders.map(\.path), newFile: settings.newFile,
-                                         newFolder: settings.newFolder, openTerminal: settings.openTerminal)
+                                         newFolder: settings.newFolder, openTerminal: settings.openTerminal, copyFolderPath: settings.copyFolderPath)
         #if DIRECT_DISTRIBUTION
         guard let data = try? JSONEncoder().encode(config) else { return }
         DistributedNotificationCenter.default().postNotificationName(Notification.Name(FinderConfiguration.notification),

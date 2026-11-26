@@ -79,11 +79,13 @@ final class FinderSync: FIFinderSync {
         add("New File", .newFile, config.newFile)
         add("New Folder", .newFolder, config.newFolder)
         add("Open Terminal Here", .openTerminal, config.openTerminal)
-        let pathTitle = Bundle(for: FinderSync.self).localizedString(forKey: "Copy Folder Path", value: "Copy Folder Path", table: nil)
-        let pathAction: Selector = context == .item ? #selector(copyPathForItem(_:)) : #selector(copyPathInContainer(_:))
-        let pathItem = NSMenuItem(title: pathTitle, action: pathAction, keyEquivalent: "")
-        pathItem.target = self
-        menu.addItem(pathItem)
+        if config.copyFolderPath {
+            let pathTitle = Bundle(for: FinderSync.self).localizedString(forKey: "Copy Folder Path", value: "Copy Folder Path", table: nil)
+            let pathAction: Selector = context == .item ? #selector(copyPathForItem(_:)) : #selector(copyPathInContainer(_:))
+            let pathItem = NSMenuItem(title: pathTitle, action: pathAction, keyEquivalent: "")
+            pathItem.target = self
+            menu.addItem(pathItem)
+        }
         return menu.items.isEmpty ? nil : menu
     }
 

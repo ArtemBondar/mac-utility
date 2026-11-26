@@ -16,7 +16,7 @@ for (const language of ['en', 'uk']) {
     await expect(page.locator('h1 .hero-period')).toHaveCSS('color', 'rgb(199, 120, 94)');
     await expect(page.locator('.action-list article')).toHaveCount(4);
     for (const download of await page.locator('[data-i18n="download"]').all()) {
-      await expect(download).toHaveAttribute('href', 'https://github.com/ArtemBondar/mac-utility/releases/download/v1.0.1/Clicklet-1.0.1.zip');
+      await expect(download).toHaveAttribute('href', 'https://github.com/ArtemBondar/mac-utility/releases/download/v1.0.2/Clicklet-1.0.2.zip');
       await expect(download).toBeVisible();
     }
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);

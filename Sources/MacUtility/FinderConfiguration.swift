@@ -6,6 +6,26 @@ struct FinderConfiguration: Codable, Equatable {
     var newFile: Bool
     var newFolder: Bool
     var openTerminal: Bool
+    var copyFolderPath: Bool
+
+    init(roots: [String], newFile: Bool, newFolder: Bool, openTerminal: Bool, copyFolderPath: Bool = true) {
+        self.roots = roots
+        self.newFile = newFile
+        self.newFolder = newFolder
+        self.openTerminal = openTerminal
+        self.copyFolderPath = copyFolderPath
+    }
+
+    private enum CodingKeys: String, CodingKey { case roots, newFile, newFolder, openTerminal, copyFolderPath }
+
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        roots = try values.decode([String].self, forKey: .roots)
+        newFile = try values.decode(Bool.self, forKey: .newFile)
+        newFolder = try values.decode(Bool.self, forKey: .newFolder)
+        openTerminal = try values.decode(Bool.self, forKey: .openTerminal)
+        copyFolderPath = try values.decodeIfPresent(Bool.self, forKey: .copyFolderPath) ?? true
+    }
 
     #if DIRECT_DISTRIBUTION
     // The direct-download build is not sandboxed; this is an ordinary shared

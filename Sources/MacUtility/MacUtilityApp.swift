@@ -124,6 +124,7 @@ struct SettingsView: View {
                 Toggle(L10n.text("New File"), isOn: actionBinding(\.newFile))
                 Toggle(L10n.text("New Folder"), isOn: actionBinding(\.newFolder))
                 Toggle(L10n.text("Open Terminal Here"), isOn: actionBinding(\.openTerminal))
+                Toggle(L10n.text("Copy Folder Path"), isOn: actionBinding(\.copyFolderPath))
             }
             Section(L10n.text("General")) {
                 Toggle(L10n.text("Show Dock icon"), isOn: Binding(get: { store.showDockIcon }, set: { visible in
@@ -153,7 +154,7 @@ struct SettingsView: View {
         Binding(get: { store.settings[keyPath: keyPath] }, set: { value in
             var settings = store.settings
             settings[keyPath: keyPath] = value
-            store.setActions(newFile: settings.newFile, newFolder: settings.newFolder, openTerminal: settings.openTerminal)
+            store.setActions(newFile: settings.newFile, newFolder: settings.newFolder, openTerminal: settings.openTerminal, copyFolderPath: settings.copyFolderPath)
         })
     }
 

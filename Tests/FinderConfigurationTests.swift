@@ -15,12 +15,19 @@ struct FinderConfigurationTests {
         precondition(FinderConfiguration.read(from: defaults) == nil)
         let config = FinderConfiguration(roots: ["/tmp/folder with space", "/tmp/other"], newFile: true,
                                          newFolder: false, openTerminal: true)
+        let legacy = Data("""
+        {"roots":["/tmp"],"newFile":false,"newFolder":true,"openTerminal":false}
+        """.utf8)
+        let migrated = try JSONDecoder().decode(FinderConfiguration.self, from: legacy)
+        precondition(migrated.copyFolderPath && !migrated.newFile && migrated.newFolder && !migrated.openTerminal)
         let notification = FinderConfiguration.directNotificationConfiguration(try JSONEncoder().encode(config))
         precondition(notification?.roots == ["/"] && notification?.newFolder == false)
         precondition(FinderConfiguration.directNotificationConfiguration(Data("invalid".utf8)) == nil)
         try config.write(to: defaults)
         precondition(FinderConfiguration.read(from: defaults) == config)
-        let replacement = FinderConfiguration(roots: [], newFile: false, newFolder: true, openTerminal: false)
+        let replacement = FinderConfiguration(roots: [], newFile: false, newFolder: true, openTerminal: false, copyFolderPath: false)
+        let disabledNotification = FinderConfiguration.directNotificationConfiguration(try JSONEncoder().encode(replacement))
+        precondition(disabledNotification?.copyFolderPath == false)
         try replacement.write(to: defaults)
         precondition(FinderConfiguration.read(from: defaults) == replacement)
         defaults.set(Data("invalid".utf8), forKey: FinderConfiguration.key)
